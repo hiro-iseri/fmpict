@@ -24,8 +24,8 @@ class FMCTMGenerator(object):
             class_list = []
             for node in list(parent):
                 if 'TEXT' in node.attrib:
-                    class_list.append(node.attrib['TEXT'].encode(sys.stdout.encoding))
-            cf_text = parent.attrib['TEXT'].encode(sys.stdout.encoding)
+                    class_list.append(node.attrib['TEXT'].encode(sys.stdout.encoding).decode(sys.stdout.encoding))
+            cf_text = parent.attrib['TEXT'].encode(sys.stdout.encoding).decode(sys.stdout.encoding)
             self._clsf_dict[cf_text] = class_list
         else:
             for node in list(parent):
@@ -37,7 +37,7 @@ class FMCTMGenerator(object):
         """output class set to stdout"""
         try:
             with open("temp.csv", "w") as pict_input_file:
-                for key, classlist in clsf_dict.iteritems():
+                for key, classlist in clsf_dict.items():
                     line = key + ':' + ",".join(classlist) + '\n'
                     pict_input_file.write(line)
         except IOError:
@@ -46,14 +46,18 @@ class FMCTMGenerator(object):
         subprocess.Popen("pict temp.csv", shell=True)
 
     def generate(self, input_file):
-        """generates test condition from FreeMind's file"""
+        """generates test condition from FreeMind file"""
         try:
             cls_tree = ET.parse(input_file)
         except ET.ParseError:
             print('"%s" is invalid format' % input_file)
             raise
         self._get_testcon_from_node(cls_tree.getroot())
-        self._print_testcondition(self._clsf_dict)
+        if not self._clsf_dict:
+            print("Error:FreeMind file is invalid")
+        else:
+            print(self._clsf_dict)
+            self._print_testcondition(self._clsf_dict)
 
 def _get_parser():
     """create parser"""
