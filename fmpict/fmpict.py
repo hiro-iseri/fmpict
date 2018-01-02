@@ -56,20 +56,20 @@ class FMCTMGenerator(object):
         if not self._clsf_dict:
             print("Error:FreeMind file is invalid")
         else:
-            print(self._clsf_dict)
             self._print_testcondition(self._clsf_dict)
 
 def _get_parser():
     """create parser"""
     parser = argparse.ArgumentParser(
         description='This script is test tool generates test cases from freemind.')
-    parser.add_argument('freemind_file', help='*.mm file', type=argparse.FileType('r'))
+    parser.add_argument('freemind_file_path', help='*.mm input file', type=argparse.FileType('r'))
+    parser.add_argument('-g', '--genparamlist', dest='generates param list file', help='run without calling pict')
     return parser
 
 def main():
     parser = _get_parser()
     gen = FMCTMGenerator()
-    gen.generate(parser.parse_args().freemind_file)
+    gen.generate(parser.parse_args().freemind_file_path)
 
 if __name__ == '__main__':
     main()
