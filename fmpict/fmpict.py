@@ -20,16 +20,26 @@ class FMCTMGenerator(object):
     def _get_testcon_from_node(self, parent):
         """reads class set from freemind's node"""
 
-        if [x for x in parent if x.attrib == {'BUILTIN': 'folder'}]:
-            class_list = []
-            for node in list(parent):
-                if 'TEXT' in node.attrib:
-                    class_list.append(node.attrib['TEXT'].encode(sys.stdout.encoding).decode(sys.stdout.encoding))
-            cf_text = parent.attrib['TEXT'].encode(sys.stdout.encoding).decode(sys.stdout.encoding)
-            self._clsf_dict[cf_text] = class_list
-        else:
+        if not 'TEXT' in parent.attrib or not [x for x in parent if x.attrib == {'BUILTIN': 'folder'}]:
             for node in list(parent):
                 self._get_testcon_from_node(node)
+            return self._clsf_dict
+
+        cf_text = parent.attrib['TEXT'].encode(sys.stdout.encoding).decode(sys.stdout.encoding)
+        if not cf_text:
+            if cf_text[0] != '#':
+                for node in list(parent):
+                    self._get_testcon_from_node(node)
+            return self._clsf_dict            
+        else:
+            class_list = []
+            for node in [y for y in list(parent) if 'TEXT' in y.attrib]:
+                text_data = node.attrib['TEXT'].encode(sys.stdout.encoding).decode(sys.stdout.encoding)
+                if text_data and text_data[0] != '#':
+                    class_list.append(text_data)
+            if class_list:
+                self._clsf_dict[cf_text] = class_list
+
         return self._clsf_dict
 
     @staticmethod
