@@ -1,2 +1,3 @@
-B:x,y,z
 A:2,3
+B:x,y,z
+IF [A] = 2 THEN [B] <= "z";
