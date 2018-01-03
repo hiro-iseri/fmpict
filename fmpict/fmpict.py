@@ -131,7 +131,6 @@ class FMCTMGenerator(object):
                 if value_item[0] == "<":
                     for key_def in self._link_def.keys():
                         if value_item[1:] == key_def[1:]:
-                            print("dfdfdfd")
                             new_value_list.extend(self._link_def[key_def])
                 else:
                     new_value_list.append(value_item)
@@ -180,7 +179,7 @@ class FMCTMGenerator(object):
             if pictfile_path:
                 file_path = pictfile_path
             else:
-                file_path = "temp.csv"
+                file_path = "temp.txt"
 
             self._gen_pict_input_file(file_path, self._clsf_dict, self._insert_text)
 

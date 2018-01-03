@@ -11,10 +11,11 @@ with open('LICENSE.txt') as f:
 setup(name='fmpict',
       version='0.0.1',
       description='Python setuptools fmpict',
-      author='hiroki iseri',
-      author_email='iseri.hiroki@example.jp',
+      author='Hiroki Iseri',
+      author_email='iseri.hiroki[a]gmail.com',
       url='https://github.com/hiro-iseri/fmpict',
       packages=find_packages(),
+      licence=license,
       entry_points="""
       [console_scripts]
       greet = fmpict.fmpict:main
