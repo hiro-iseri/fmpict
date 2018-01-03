@@ -75,6 +75,18 @@ class FMCTMGenerator(object):
     def _get_text_str(node):
         return node.attrib['TEXT'].encode(sys.stdout.encoding).decode(sys.stdout.encoding)
 
+    @staticmethod
+    def append_child_text_node(dict, parent):
+        cf_text = FMCTMGenerator._get_text_str(parent)
+        class_list = []
+        for node in [x for x in list(parent) if 'TEXT' in x.attrib]:
+            child_node_type = FMCTMGenerator._get_node_type(node)
+            if NodeType.is_valid_data_node(child_node_type):
+                text_data = FMCTMGenerator._get_text_str(node)
+                class_list.append(text_data)
+        if class_list:
+            dict[cf_text] = class_list        
+
     def _get_testcon_from_node(self, parent):
         """reads class set from freemind node"""
         node_type = self._get_node_type(parent)
@@ -88,9 +100,8 @@ class FMCTMGenerator(object):
                 if NodeType.is_valid_data_node(child_node_type):
                     text_data = self._get_text_str(node)
                     self._pict_exec_option = self._pict_exec_option + ' ' + text_data
-        
-        if node_type == NodeType.HEADER or \
-            node_type == NodeType.CONSTRAINT_DEFINITIONS or \
+
+        if node_type == NodeType.CONSTRAINT_DEFINITIONS or \
             node_type == NodeType.SUB_MODEL_DEFINITIONS:
             for node in [y for y in list(parent) if 'TEXT' in y.attrib]:
                 child_node_type = self._get_node_type(node)
@@ -101,28 +112,12 @@ class FMCTMGenerator(object):
                     self._insert_text[node_type] = text_data
 
         if node_type == NodeType.FACTOR:
-            cf_text = self._get_text_str(parent)
-            class_list = []
-            for node in [y for y in list(parent) if 'TEXT' in y.attrib]:
-                child_node_type = self._get_node_type(node)
-                if NodeType.is_valid_data_node(child_node_type):
-                    text_data = self._get_text_str(node)
-                    class_list.append(text_data)
-            if class_list:
-                self._clsf_dict[cf_text] = class_list
+            self.append_child_text_node(self._clsf_dict, parent)
+            return self._clsf_dict
 
         if node_type == NodeType.LINK_DEF:
-            cf_text = self._get_text_str(parent)
-            class_list = []
-            for node in [y for y in list(parent) if 'TEXT' in y.attrib]:
-                child_node_type = self._get_node_type(node)
-                if NodeType.is_valid_data_node(child_node_type):
-                    text_data = self._get_text_str(node)
-                    class_list.append(text_data)
-            if class_list:
-                self._link_def[cf_text] = class_list
-
-            return self._link_def
+            self.append_child_text_node(self._link_def, parent)
+            return self._clsf_dict
 
         # NodeType.NO_DATA or non type
         for node in list(parent):
