@@ -1,5 +1,3 @@
 B:x,y,z
-C:>Pattern
+C:test,test2,test3
 A:2,3
-IF [A] = 2 THEN [B] <= "z";
-IF [A] = 1 THEN [B] <= "x";

@@ -46,7 +46,7 @@ class FMCTMGenerator(object):
 
     @staticmethod
     def _get_node_type(node):
-        """get node type from node.attrib"""
+        """get node type by node.attrib"""
         if not 'TEXT' in node.attrib:
             return NodeType.NO_DATA
         if not node.attrib['TEXT']:
@@ -54,8 +54,8 @@ class FMCTMGenerator(object):
 
         attrib_text = FMCTMGenerator._get_text_str(node)
 
-        prefix_dict = {'#':NodeType.COMMENT, '<':NodeType.LINK_DEF,
-                       '>':NodeType.LINK_REFER, '@':NodeType.FACTOR}
+        prefix_dict = {'#':NodeType.COMMENT, '>':NodeType.LINK_DEF,
+                       '<':NodeType.LINK_REFER, '@':NodeType.FACTOR}
         for key, value in prefix_dict.items():
             if attrib_text[0] == key:
                 return value
@@ -125,8 +125,17 @@ class FMCTMGenerator(object):
         return self._clsf_dict
 
     def _replace_link_def(self):
-        for key, value in self._clsf_dict.items():
-            pass
+        for key, value_list in self._clsf_dict.items():
+            new_value_list = []
+            for value_item in value_list:
+                if value_item[0] == "<":
+                    for key_def in self._link_def.keys():
+                        if value_item[1:] == key_def[1:]:
+                            print("dfdfdfd")
+                            new_value_list.extend(self._link_def[key_def])
+                else:
+                    new_value_list.append(value_item)
+            self._clsf_dict[key] = new_value_list
 
     @staticmethod
     def _gen_pict_input_file(file_path, clsf_dict, insert_text_dict):
@@ -141,6 +150,7 @@ class FMCTMGenerator(object):
                     pict_input_file.write(insert_text_dict[NodeType.CONSTRAINT_DEFINITIONS])
         except IOError:
             print('Error:pict file cannot be created')
+            raise
 
     @staticmethod
     def _print_testcondition(file_path, exec_option):
@@ -162,6 +172,7 @@ class FMCTMGenerator(object):
             raise
 
         self._get_testcon_from_node(cls_tree.getroot())
+        self._replace_link_def()
 
         if not self._clsf_dict:
             print("Error:FreeMind file is invalid")
@@ -179,12 +190,12 @@ class FMCTMGenerator(object):
                 os.remove(file_path)
 
 def _get_parser():
-    """create parser"""
+    """creates FMPict parser"""
     parser = argparse.ArgumentParser(
         description='This script is test tool generates test cases from freemind.')
     parser.add_argument('freemind_file_path', help='*.mm input file', type=argparse.FileType('r'))
     parser.add_argument('-p', '--pict_file_path', help='pict file path', type=str)
-    parser.add_argument('-g', '--genparamlist', help='run without calling pict', action="store_true")
+    parser.add_argument('-g', '--genparamlist', help='only generates pict file', action="store_true")
     parser.add_argument('-s', '--savepictfile', help='save pict file', action="store_true")
     return parser
 
