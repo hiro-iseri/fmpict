@@ -1,3 +1,5 @@
-A:2,3
 B:x,y,z
+C:>Pattern
+A:2,3
 IF [A] = 2 THEN [B] <= "z";
+IF [A] = 1 THEN [B] <= "x";
