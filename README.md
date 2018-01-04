@@ -1,6 +1,6 @@
 # FMPict
 
-# FMPictとは
+## FMPictとは
 
 FreeMideで、テストツールPICTを操作するツールです。
 
@@ -8,10 +8,7 @@ FreeMideで、テストツールPICTを操作するツールです。
 
 実行例「python fmctm.py FreeMindeファイル」  
 
-## 動作環境
+詳細な使い方、動作環境は「doc/manual.md」を参照ください。
 
-テスト生成にPICTを使用しています。PICTの実行ファイル格納場所を環境変数PATHに登録ください。
-
-動作OS：Windows
-対応環境：Python3
+[doc/manual.md](https://github.com/hiro-iseri/fmpict/blob/master/doc/manual.md)
 

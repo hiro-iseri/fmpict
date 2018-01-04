@@ -191,10 +191,10 @@ class FMCTMGenerator(object):
 def _get_parser():
     """creates FMPict parser"""
     parser = argparse.ArgumentParser(
-        description='This script is test tool generates test cases from freemind.')
+        description='This tool generates test cases using freemind and pict')
     parser.add_argument('freemind_file_path', help='*.mm input file', type=argparse.FileType('r'))
-    parser.add_argument('-p', '--pict_file_path', help='pict file path', type=str)
-    parser.add_argument('-g', '--genparamlist', help='only generates pict file', action="store_true")
+    parser.add_argument('-p', '--pict_file_path', help='save pict file to specified path', type=str)
+    parser.add_argument('-g', '--genparamlist', help='execute until pict file generation', action="store_true")
     parser.add_argument('-s', '--savepictfile', help='save pict file', action="store_true")
     return parser
 
