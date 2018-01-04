@@ -20,16 +20,20 @@ FMPictを利用するメリットは以下の通りです。
 
 実行には以下が必要です。
 
-* Python3
+* Python3 or Python2.7
 * PICT (https://github.com/Microsoft/pict/)
     * PICTの実行ファイルを参照可能にしてください
         * Windowsなら、PICT実行ファイル格納フォルダを、環境変数PATHに追加
 
-動作確認環境：Windows 10
+動作確認環境：Windows 10, Mac OS X
 
 ## ツール導入（TBD）
 
-fmpictフォルダに格納されたfmpict.pyを、適宜の場所に格納し使用します。1ファイルで完結しているため、その他インストール作業は不要です。
+1. 以下の最新版からfmpict.zipをダウンロードし、解凍します。
+
+https://github.com/hiro-iseri/fmpict/releases
+
+2. fmpictフォルダに格納されたfmpict.pyを、適宜の場所に格納し使用します。1ファイルで完結しているため、その他インストール作業は不要です。
 実行は、例えば以下コマンドを実行して使用します
 
 `python fmpict.py FreeMindファイル`
