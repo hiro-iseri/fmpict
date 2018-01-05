@@ -2,11 +2,11 @@
 
 ## FMPictとは
 
-FreeMideで、テストツールPICTを操作するツールです。
+FreeMindで、テストツールPICTを操作するツールです。
 
 ## 使い方
 
-実行例「python fmctm.py FreeMindeファイル」  
+実行例「python fmctm.py FreeMindファイル」  
 
 詳細な使い方、動作環境は「doc/manual.md」を参照ください。
 
