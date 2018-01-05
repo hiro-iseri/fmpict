@@ -42,9 +42,15 @@ class NodeMark(object):
                        NodeType.LINK_REFER:'<', NodeType.FACTOR:'@'}
     prefix = _INITIAL_PREFIX
 
+    _INITIAL_MARK_WORD = {NodeType.EXEC_OPTION:'{pict_exec_option}',
+                          NodeType.SUB_MODEL_DEFINITIONS:'{sub_model_definitions}',
+                          NodeType.CONSTRAINT_DEFINITIONS:'{constraint_definitions}'}
+    mark_word = _INITIAL_MARK_WORD
+
     @classmethod
     def init(cls):
         prefix = cls._INITIAL_PREFIX
+        mark_word = cls._INITIAL_MARK_WORD
     
     @classmethod
     def get_node_type(cls, node_text):
@@ -54,7 +60,11 @@ class NodeMark(object):
                     # empty TEXT
                     return NodeType.NO_DATA
                 else:
-                    return key
+                    return key        
+        for key, value in cls.mark_word.items():
+            if value in node_text:
+                return key
+
         return NodeType.ETC
 
 
@@ -92,13 +102,6 @@ class FMCTMGenerator(object):
         node_type = NodeMark.get_node_type(attrib_text)
         if node_type != NodeType.ETC:
             return node_type
-
-        word_dict = {'{pict_exec_option}':NodeType.EXEC_OPTION,
-                     '{sub_model_definitions}':NodeType.SUB_MODEL_DEFINITIONS,
-                     '{constraint_definitions}':NodeType.CONSTRAINT_DEFINITIONS}
-        for key, value in word_dict.items():
-            if key in attrib_text:
-                return value
 
         if [x for x in node if x.attrib == {'BUILTIN': 'folder'}]:
             return NodeType.FACTOR
@@ -144,8 +147,6 @@ class FMCTMGenerator(object):
                 child_node_type = self._get_node_type(node)
                 if NodeType.is_valid_data_node(child_node_type):
                     text_data = self._get_text_str(node)
-                    if node_type in self._insert_text:
-                        Msg.p(Msg.WRN, 'Duplicate OPTION[%d]' % (node_type))
                     self._insert_text[node_type] = text_data
             return self._clsf_dict
 
@@ -167,9 +168,8 @@ class FMCTMGenerator(object):
             new_value_list = []
             for value_item in value_list:
                 if value_item[0] == NodeMark.prefix[NodeType.LINK_REFER]:
-                    for key_def in self._link_def.keys():
-                        if value_item[1:] == key_def[1:]:
-                            new_value_list.extend(self._link_def[key_def])
+                    for key_def in [keys for keys in self._link_def.keys() if value_item[1:] == keys[1:]]:
+                        new_value_list.extend(self._link_def[key_def])
                 else:
                     new_value_list.append(value_item)
             self._clsf_dict[key] = new_value_list
