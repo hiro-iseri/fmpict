@@ -15,6 +15,7 @@ setup(name='fmpict',
       author_email='iseri.hiroki@example.jp',
       url='https://github.com/hiro-iseri/fmpict',
       packages=find_packages(),
+      license=license,
       entry_points="""
       [console_scripts]
       greet = fmpict.fmpict:main

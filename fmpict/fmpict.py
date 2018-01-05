@@ -1,5 +1,8 @@
 # coding: utf-8
-"""pairwise testing tool using FreeMind and PICT"""
+"""pairwise testing tool using FreeMind and PICT
+Site: https://github.com/hiro-iseri/fmpict/
+License: MIT
+"""
 
 import xml.etree.ElementTree as ET
 import subprocess
@@ -7,9 +10,18 @@ import argparse
 import sys
 import os
 import codecs
+import re
+
+"""
+TODO:
+support pict alias
+add custom option of node mark
+add freemind syntax checking func
+"""
 
 class NodeType(object):
     """type of Freeminde node"""
+    ETC = 0
     NO_DATA = 1
     COMMENT = 2
     VAILD_DATA = 3
@@ -20,10 +32,31 @@ class NodeType(object):
     CONSTRAINT_DEFINITIONS = 8
     LINK_DEF = 9
     LINK_REFER = 10
-    
+
     @staticmethod
     def is_valid_data_node(node_type):
         return node_type == NodeType.VAILD_DATA or node_type == NodeType.LINK_REFER
+
+class NodeMark(object):
+    _INITIAL_PREFIX = {NodeType.COMMENT:'#', NodeType.LINK_DEF:'>',
+                       NodeType.LINK_REFER:'<', NodeType.FACTOR:'@'}
+    prefix = _INITIAL_PREFIX
+
+    @classmethod
+    def init(cls):
+        prefix = cls._INITIAL_PREFIX
+    
+    @classmethod
+    def get_node_type(cls, node_text):
+        for key, value in cls.prefix.items():
+            if node_text[0] == value:
+                if len(node_text) == 1:
+                    # empty TEXT
+                    return NodeType.NO_DATA
+                else:
+                    return key
+        return NodeType.ETC
+
 
 class FMCTMGenerator(object):
     """generates test condition from FreeMind file"""
@@ -55,19 +88,14 @@ class FMCTMGenerator(object):
             return NodeType.NO_DATA
 
         attrib_text = FMCTMGenerator._get_text_str(node)
-        prefix_dict = {'#':NodeType.COMMENT, '>':NodeType.LINK_DEF,
-                       '<':NodeType.LINK_REFER, '@':NodeType.FACTOR}
-        for key, value in prefix_dict.items():
-            if attrib_text[0] == key:
-                if len(attrib_text) == 1:
-                    # empty TEXT
-                    return NodeType.NO_DATA
-                else:
-                    return value
 
-        word_dict = {'[pict_exec_option]':NodeType.EXEC_OPTION,
-                     '[sub_model_definitions]':NodeType.SUB_MODEL_DEFINITIONS,
-                     '[constraint_definitions]':NodeType.CONSTRAINT_DEFINITIONS}
+        node_type = NodeMark.get_node_type(attrib_text)
+        if node_type != NodeType.ETC:
+            return node_type
+
+        word_dict = {'{pict_exec_option}':NodeType.EXEC_OPTION,
+                     '{sub_model_definitions}':NodeType.SUB_MODEL_DEFINITIONS,
+                     '{constraint_definitions}':NodeType.CONSTRAINT_DEFINITIONS}
         for key, value in word_dict.items():
             if key in attrib_text:
                 return value
@@ -84,7 +112,7 @@ class FMCTMGenerator(object):
     def append_child_text_node(dict, parent):
         """add valid child node text to dict"""
         cf_text = FMCTMGenerator._get_text_str(parent)
-        if cf_text[0] == '@':
+        if cf_text[0] == NodeMark.prefix[NodeType.FACTOR]:
             cf_text = cf_text[1:]
         class_list = []
         for node in [x for x in list(parent) if 'TEXT' in x.attrib]:
@@ -108,6 +136,7 @@ class FMCTMGenerator(object):
                 if NodeType.is_valid_data_node(child_node_type):
                     text_data = self._get_text_str(node)
                     self._pict_exec_option = self._pict_exec_option + ' ' + text_data
+            return self._clsf_dict
 
         if node_type == NodeType.CONSTRAINT_DEFINITIONS or \
             node_type == NodeType.SUB_MODEL_DEFINITIONS:
@@ -118,6 +147,7 @@ class FMCTMGenerator(object):
                     if node_type in self._insert_text:
                         Msg.p(Msg.WRN, 'Duplicate OPTION[%d]' % (node_type))
                     self._insert_text[node_type] = text_data
+            return self._clsf_dict
 
         if node_type == NodeType.FACTOR:
             self.append_child_text_node(self._clsf_dict, parent)
@@ -136,7 +166,7 @@ class FMCTMGenerator(object):
         for key, value_list in self._clsf_dict.items():
             new_value_list = []
             for value_item in value_list:
-                if value_item[0] == "<":
+                if value_item[0] == NodeMark.prefix[NodeType.LINK_REFER]:
                     for key_def in self._link_def.keys():
                         if value_item[1:] == key_def[1:]:
                             new_value_list.extend(self._link_def[key_def])
@@ -144,8 +174,41 @@ class FMCTMGenerator(object):
                     new_value_list.append(value_item)
             self._clsf_dict[key] = new_value_list
 
+    def generate(self, input_file, only_gen_pictfile=False, save_pictfile=False, pictfile_path=""):
+        """generates test condition from FreeMind file"""
+        self._init_gendata()
+        try:
+            cls_tree = ET.parse(input_file)
+        except ET.ParseError:
+            Msg.p(Msg.ERR, 'cannot perse freemind file')
+            raise
+        except IOError:
+            Msg.p(Msg.ERR, 'cannot open freemind file')
+            raise
+
+        self._get_testcon_from_node(cls_tree.getroot())
+        self._replace_link_def()
+
+        if not self._clsf_dict:
+            Msg.p(Msg.ERR, 'freemind file is empty')
+            return
+
+        if pictfile_path:
+            file_path = pictfile_path
+        else:
+            file_path = "temp.txt"
+
+        PictRunner.gen_pict_input_file(file_path, self._clsf_dict, self._insert_text)
+
+        if not only_gen_pictfile:
+            PictRunner.print_testcondition(file_path, self._pict_exec_option)
+
+        if not save_pictfile:
+            PictRunner.delete_pict_file(file_path)
+
+class PictRunner(object):
     @staticmethod
-    def _gen_pict_input_file(file_path, clsf_dict, insert_text_dict):
+    def gen_pict_input_file(file_path, clsf_dict, insert_text_dict):
         try:
             with codecs.open(file_path, "w", sys.stdout.encoding) as pict_input_file:
                 for key, classlist in clsf_dict.items():
@@ -160,7 +223,7 @@ class FMCTMGenerator(object):
             raise
 
     @staticmethod
-    def _print_testcondition(file_path, exec_option):
+    def print_testcondition(file_path, exec_option):
         """output class set to stdout"""
         command = "pict %s%s" % (file_path, exec_option)
         prc = subprocess.Popen(command.split())
@@ -168,37 +231,10 @@ class FMCTMGenerator(object):
             prc.wait()
         else:
             Msg.p(Msg.ERR, 'cannot run pict')
-
-    def generate(self, input_file, only_gen_pictfile=False, save_pictfile=False, pictfile_path=""):
-        """generates test condition from FreeMind file"""
-        self._init_gendata()
-        try:
-            cls_tree = ET.parse(input_file)
-        except ET.ParseError:
-            Msg.p(Msg.ERR, 'cannot perse input file')
-            raise
-        except IOError:
-            Msg.p(Msg.ERR, 'cannot open input file')
-            raise
-
-        self._get_testcon_from_node(cls_tree.getroot())
-        self._replace_link_def()
-
-        if not self._clsf_dict:
-            Msg.p(Msg.ERR, 'input file is empty')
-            return
-
-        if pictfile_path:
-            file_path = pictfile_path
-        else:
-            file_path = "temp.txt"
-
-        self._gen_pict_input_file(file_path, self._clsf_dict, self._insert_text)
-
-        if not only_gen_pictfile:
-            self._print_testcondition(file_path, self._pict_exec_option)
-        if not save_pictfile:
-            os.remove(file_path)
+    
+    @staticmethod
+    def delete_pict_file(file_path):
+        os.remove(file_path)
 
 class Msg(object):
     """Manage messages to users"""
