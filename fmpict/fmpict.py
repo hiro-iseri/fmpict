@@ -70,12 +70,18 @@ class NodeMark(object):
     
     @classmethod
     def get_excluding_tag(cls, node_text, exclude_tag_list):
+        if not exclude_tag_list:
+            return []
+
         ex_set = set(exclude_tag_list)
         tag_set = set(cls._RE_TAG_WORD.findall(node_text))
         return ex_set & tag_set
 
     @classmethod
     def get_text_excluding_tag(cls, node_text):
+        if not node_text:
+            return node_text
+
         text = node_text
         tag_set = set(cls._RE_TAG_WORD.findall(node_text))
         for tag in tag_set:
@@ -84,6 +90,8 @@ class NodeMark(object):
 
     @classmethod
     def get_tag_list(cls, option_text):
+        if not option_text:
+            return None
         return cls._RE_TAG_WORD.findall(option_text)
 
 class FMCTMGenerator(object):
@@ -94,7 +102,7 @@ class FMCTMGenerator(object):
         self._pict_exec_option = ""
         self._insert_text = {}
         self._link_def = {}
-        self._exclude_tag_list = ""
+        self._exclude_tag_list = []
     
     def _init_gendata(self):
         """initialize analysis data"""
@@ -102,7 +110,7 @@ class FMCTMGenerator(object):
         self._pict_exec_option = ""
         self._insert_text = {}
         self._link_def = {}
-        self._exclude_tag_list = ""
+        self._exclude_tag_list = []
 
     def get_testcon(self):
         """return last pict data"""
@@ -150,7 +158,15 @@ class FMCTMGenerator(object):
                 text_data = FMCTMGenerator._get_text_str(node)
                 class_list.append(text_data)
         if class_list:
-            dict[cf_text] = class_list        
+            dict[cf_text] = class_list
+
+    def _has_tag(self, node):
+        if not 'TEXT' in node.attrib:
+            return False
+
+        text = FMCTMGenerator._get_raw_text_str(node)
+        return NodeMark.get_excluding_tag(text, self._exclude_tag_list)
+  
 
     def _get_testcon_from_node(self, parent):
         """reads class set from freemind node"""
@@ -159,8 +175,7 @@ class FMCTMGenerator(object):
         if node_type == NodeType.COMMENT:
             return self._clsf_dict
 
-        text = FMCTMGenerator._get_raw_text_str(parent)
-        if NodeMark.get_excluding_tag(text, self._exclude_tag_list):
+        if self._has_tag(parent):
             return self._clsf_dict            
 
         if node_type == NodeType.EXEC_OPTION:
@@ -217,7 +232,7 @@ class FMCTMGenerator(object):
             Msg.p(Msg.ERR, 'cannot open freemind file')
             raise
 
-        self.self._exclude_tag_list = exclude_tag_list
+        self._exclude_tag_list = exclude_tag_list
         self._get_testcon_from_node(cls_tree.getroot())
         self._replace_link_def()
 
