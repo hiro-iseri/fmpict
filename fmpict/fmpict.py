@@ -46,7 +46,7 @@ class NodeMark(object):
                           NodeType.SUB_MODEL_DEFINITIONS:'{sub_model_definitions}',
                           NodeType.CONSTRAINT_DEFINITIONS:'{constraint_definitions}'}
     mark_word = _INITIAL_MARK_WORD
-    _RE_TAG_WORD = re.compile("\[[\w_\-]+\]")
+    _RE_TAG_WORD = re.compile(r"\[[\w_\-]+\]")
 
     @classmethod
     def init(cls):
@@ -55,6 +55,8 @@ class NodeMark(object):
     
     @classmethod
     def get_node_type(cls, node_text):
+        if not node_text:
+            return NodeType.ETC
         for key, value in cls.prefix.items():
             if node_text[0] == value:
                 if len(node_text) == 1:
