@@ -106,15 +106,15 @@ FMpictの実行には、以下のようにコマンドを使います。
 
 ### オプション記法
 
-* [sub_model_definitions]が書かれたノードの子ノードは、PICT入力ファイルのsub_model_definitions部分に転記されます。  
-* [constraint_definitions]が書かれたノードの子ノードは、PICT入力ファイルのconstraint_definitions部分に転記されます。
-* [pict_exec_option]が書かれたノードの子ノードは、PICT実行時オプションに展開されます。
+* {sub_model_definitions}が書かれたノードの子ノードは、PICT入力ファイルのsub_model_definitions部分に転記されます。  
+* {constraint_definitions}が書かれたノードの子ノードは、PICT入力ファイルのconstraint_definitions部分に転記されます。
+* {pict_exec_option]が書かれたノードの子ノードは、PICT実行時オプションに展開されます。
 
 以下のFreeMindファイルで実行した場合について説明します。
 
 ![basic_rule](image/.option_rule.png)
 
-上記の図でFMPictを実行した場合、以下のPICT入力データが生成されます（[constraint_definitions]の内容が末尾に追記される）。
+上記の図でFMPictを実行した場合、以下のPICT入力データが生成されます（{constraint_definitions}の内容が末尾に追記される）。
 
 ```
 文字コード:UTF-8,SHIFT-JIS,ASCII
@@ -123,7 +123,7 @@ FMpictの実行には、以下のようにコマンドを使います。
 IF [文字コード] = "ASCII"   THEN [半角・全角] <= 全角なし;
 ```
 
-そして以下のPICT実行コマンドが実行されます([pict_exec_option]指定テキストを実行コマンド末尾に付記)。
+そして以下のPICT実行コマンドが実行されます({pict_exec_option}指定テキストを実行コマンド末尾に付記)。
 
 ```
 pict PICT入力データファイル /c
