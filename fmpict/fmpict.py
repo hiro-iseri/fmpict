@@ -12,7 +12,7 @@ import os
 import codecs
 import re
 
-"""Coding policy:
+"""coding policy:
 - support both python 2.7 and python 3
 """
 
@@ -144,7 +144,7 @@ class FMCTMGenerator(object):
 
     @staticmethod
     def _get_text_str(node):
-        text = node.attrib['TEXT'].encode(sys.stdout.encoding).decode(sys.stdout.encoding)
+        text = FMCTMGenerator._get_raw_text_str(node)
         return NodeMark.get_text_excluding_tag(text)
 
     @staticmethod
