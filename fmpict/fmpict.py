@@ -1,5 +1,5 @@
 # coding: utf-8
-"""pairwise testing tool using FreeMind and PICT
+"""testing tool using FreeMind and PICT
 Site: https://github.com/hiro-iseri/fmpict/
 License: MIT
 """
@@ -12,15 +12,12 @@ import os
 import codecs
 import re
 
-"""
-TODO:
-support pict alias
-add custom option of node mark
-add freemind syntax checking func
+"""Coding policy:
+- support both python 2.7 and python 3
 """
 
 class NodeType(object):
-    """type of Freeminde node"""
+    """type of FreeMind node"""
     ETC = 0
     NO_DATA = 1
     COMMENT = 2
@@ -35,9 +32,11 @@ class NodeType(object):
 
     @staticmethod
     def is_valid_data_node(node_type):
+        """check value(or class)"""
         return node_type == NodeType.VAILD_DATA or node_type == NodeType.LINK_REFER
 
 class NodeMark(object):
+    """providing identification capabilities for node type"""
     _INITIAL_PREFIX = {NodeType.COMMENT:'#', NodeType.LINK_DEF:'>',
                        NodeType.LINK_REFER:'<', NodeType.FACTOR:'@'}
     prefix = _INITIAL_PREFIX
@@ -50,8 +49,9 @@ class NodeMark(object):
 
     @classmethod
     def init(cls):
-        prefix = cls._INITIAL_PREFIX
-        mark_word = cls._INITIAL_MARK_WORD
+        """reset customize"""
+        cls.prefix = cls._INITIAL_PREFIX
+        cls.mark_word = cls._INITIAL_MARK_WORD
     
     @classmethod
     def get_node_type(cls, node_text):
@@ -64,6 +64,7 @@ class NodeMark(object):
                     return NodeType.NO_DATA
                 else:
                     return key        
+
         for key, value in cls.mark_word.items():
             if value in node_text:
                 return key
@@ -107,14 +108,14 @@ class FMCTMGenerator(object):
         self._exclude_tag_list = []
     
     def _init_gendata(self):
-        """initialize analysis data"""
+        """reset analysis data"""
         self._clsf_dict = {}
         self._pict_exec_option = ""
         self._insert_text = {}
         self._link_def = {}
         self._exclude_tag_list = []
 
-    def get_testcon(self):
+    def get_last_testconditions(self):
         """return last pict data"""
         return self._clsf_dict
 
@@ -152,7 +153,7 @@ class FMCTMGenerator(object):
         cf_text = FMCTMGenerator._get_text_str(parent)
         if cf_text[0] == NodeMark.prefix[NodeType.FACTOR]:
             cf_text = cf_text[1:]
-        
+
         class_list = []
         for node in [x for x in list(parent) if 'TEXT' in x.attrib]:
             child_node_type = FMCTMGenerator._get_node_type(node)
@@ -221,12 +222,10 @@ class FMCTMGenerator(object):
                     new_value_list.append(value_item)
             self._clsf_dict[key] = new_value_list
 
-    def generate(self, input_file, only_gen_pictfile=False, save_pictfile=False, pictfile_path="", exclude_tag_list=""):
-        """generates test condition from FreeMind file"""
-
-        self._init_gendata()
+    
+    def get_testconditions_from_fmfile(self, freemind_file_path, exclude_tag_list=""):
         try:
-            cls_tree = ET.parse(input_file)
+            cls_tree = ET.parse(freemind_file_path)
         except ET.ParseError:
             Msg.p(Msg.ERR, 'cannot perse freemind file')
             raise
@@ -234,20 +233,31 @@ class FMCTMGenerator(object):
             Msg.p(Msg.ERR, 'cannot open freemind file')
             raise
 
+        return self.get_testconditions_from_fmet(cls_tree, exclude_tag_list)
+    
+    def get_testconditions_from_fmet(self, fm_tree, exclude_tag_list=""):
         self._exclude_tag_list = exclude_tag_list
-        self._get_testcon_from_node(cls_tree.getroot())
+        self._get_testcon_from_node(fm_tree.getroot())
         self._replace_link_def()
+        return self._clsf_dict
 
-        if not self._clsf_dict:
+    def generate(self, input_file, only_gen_pictfile=False, save_pictfile=False, pictfile_path="", exclude_tag_list=""):
+        """generates test condition from FreeMind file"""
+
+        self._init_gendata()
+
+        clsf_dict = self.get_testconditions_from_fmfile(input_file, exclude_tag_list)
+
+        if not clsf_dict:
             Msg.p(Msg.ERR, 'freemind file is empty')
             return
 
         if pictfile_path:
             file_path = pictfile_path
         else:
-            file_path = "temp.txt"
+            file_path = PictRunner.DEFAULT_INPUT_FILE_PATH
 
-        PictRunner.gen_pict_input_file(file_path, self._clsf_dict, self._insert_text)
+        PictRunner.gen_pict_input_file(file_path, clsf_dict, self._insert_text)
 
         if not only_gen_pictfile:
             PictRunner.print_testcondition(file_path, self._pict_exec_option)
@@ -256,9 +266,12 @@ class FMCTMGenerator(object):
             PictRunner.delete_pict_file(file_path)
 
 class PictRunner(object):
+    DEFAULT_INPUT_FILE_PATH = "temp.txt"
+
     @staticmethod
     def gen_pict_input_file(file_path, clsf_dict, insert_text_dict):
         """generate pict input file"""
+
         try:
             with codecs.open(file_path, "w", sys.stdout.encoding) as pict_input_file:
                 for key, classlist in clsf_dict.items():
@@ -287,7 +300,7 @@ class PictRunner(object):
         os.remove(file_path)
 
 class Msg(object):
-    """Manage messages to users"""
+    """managing message for users"""
     ERR = "Error"
     WRN = "Warning"
     INF = "Info"
@@ -303,17 +316,19 @@ def _get_parser():
         description='This tool generates test cases using freemind and pict')
     parser.add_argument('freemind_file_path', help='*.mm input file', type=argparse.FileType('r'))
     parser.add_argument('-p', '--pict_file_path', help='save pict file to specified path', type=str)
-    parser.add_argument('-g', '--genparamlist', help='execute until pict file generation', action="store_true")
+    parser.add_argument(
+        '-g', '--genparamlist', help='execute until pict file generation', action="store_true")
     parser.add_argument('-s', '--savepictfile', help='save pict file', action="store_true")
-    parser.add_argument('-e', '--exclude_tag_list', help='exclude specified tag in generating', type=str)
+    parser.add_argument(
+        '-e', '--exclude_tag_list', help='exclude specified tag in generating', type=str)
     return parser
 
-def main():
+def run():
     args = _get_parser().parse_args()
     gen = FMCTMGenerator()
     gen.generate(args.freemind_file_path, args.genparamlist,
-                 args.savepictfile, args.pict_file_path, 
+                 args.savepictfile, args.pict_file_path,
                  NodeMark.get_tag_list(args.exclude_tag_list))
 
 if __name__ == '__main__':
-    main()
+    run()
