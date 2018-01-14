@@ -1,1 +1,0 @@
-from fmpict import FMCTMGenerator

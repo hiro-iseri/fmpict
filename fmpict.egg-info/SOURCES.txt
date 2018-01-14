@@ -1,9 +1,0 @@
-setup.cfg
-setup.py
-fmpict/__init__.py
-fmpict/fmpict.py
-fmpict.egg-info/PKG-INFO
-fmpict.egg-info/SOURCES.txt
-fmpict.egg-info/dependency_links.txt
-fmpict.egg-info/entry_points.txt
-fmpict.egg-info/top_level.txt

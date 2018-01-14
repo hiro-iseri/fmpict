@@ -1,6 +1,8 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyc
+*.bak
 
 *.so
 
