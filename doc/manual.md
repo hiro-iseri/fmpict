@@ -39,26 +39,6 @@ FMpictの実行には、以下のようにコマンドを使います。
 
 `python fmpict.py FreeMindファイル`
 
-## クイックスタート
-
-1. FreeMindで以下のように記述。「simple.mm」の名前で保存
-![sample1](image/simple.png)
-
-2. fmpict.py(fmpictフォルダに格納)とsimple.mmを、同じフォルダに格納
-
-3. CUI環境(Windowsならコマンドプロンプト)で以下を実行
-
-`python fmpict.py simple.mm >output.txt`
-
-4. 以下のテスト条件一覧がoutput.txtに保存される
-
-```
-煙草    性別
-喫煙    女
-喫煙    男
-禁煙    男
-禁煙    女
-```
 
 ## 使い方解説
 

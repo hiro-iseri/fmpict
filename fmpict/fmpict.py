@@ -109,11 +109,7 @@ class FMCTMGenerator(object):
     
     def _init_gendata(self):
         """reset analysis data"""
-        self._clsf_dict = {}
-        self._pict_exec_option = ""
-        self._insert_text = {}
-        self._link_def = {}
-        self._exclude_tag_list = []
+        self.__init__()
 
     def get_last_testconditions(self):
         """return last pict data"""
@@ -323,7 +319,8 @@ def _get_parser():
         '-e', '--exclude_tag_list', help='exclude specified tag in generating', type=str)
     return parser
 
-def run():
+def run_standalone():
+    """execute on CUI"""
     args = _get_parser().parse_args()
     gen = FMCTMGenerator()
     gen.generate(args.freemind_file_path, args.genparamlist,
@@ -331,4 +328,4 @@ def run():
                  NodeMark.get_tag_list(args.exclude_tag_list))
 
 if __name__ == '__main__':
-    run()
+    run_standalone()
