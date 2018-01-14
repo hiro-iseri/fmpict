@@ -7,20 +7,14 @@ License: MIT
 
 from setuptools import setup, find_packages
 
-try:
-    with open('README.md') as fr:
-        long_description = fr.read()
-except IOError:
-    long_description = ""
-
-
 setup(
     name='fmpict',
     version='0.0.1',
     description='Combinatorial testing tool using FreeMind and PICT',
     author='Hiroki Iseri',
+    keywords='Combinatorial testing tool',
     author_email='iseri.hiroki@gmail.com',
-    long_description=long_description,
+    long_description='Combinatorial testing tool using FreeMind and PICT',
     license="MIT",
     url='https://github.com/hiro-iseri/fmpict',
     classifiers=[
