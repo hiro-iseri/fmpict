@@ -92,7 +92,7 @@ FMpictの実行には、以下のようにコマンドを使います。
 
 以下のFreeMindファイルで実行した場合について説明します。
 
-![basic_rule](image/.option_rule.png)
+![basic_rule](image/option_rule.png)
 
 上記の図でFMPictを実行した場合、以下のPICT入力データが生成されます（{constraint_definitions}の内容が末尾に追記される）。
 
