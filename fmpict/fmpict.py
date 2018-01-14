@@ -14,6 +14,7 @@ import re
 
 """coding policy:
 - support both python 2.7 and python 3
+- depend on only standard libraries
 """
 
 class NodeType(object):
@@ -46,6 +47,8 @@ class NodeMark(object):
                           NodeType.CONSTRAINT_DEFINITIONS:'{constraint_definitions}'}
     mark_word = _INITIAL_MARK_WORD
     _RE_TAG_WORD = re.compile(r"\[[\w_\-]+\]")
+    
+    _INITIAL_MARK_ICON = {NodeType.FACTOR:{'BUILTIN': 'folder'}}
 
     @classmethod
     def init(cls):
@@ -54,7 +57,7 @@ class NodeMark(object):
         cls.mark_word = cls._INITIAL_MARK_WORD
     
     @classmethod
-    def get_node_type(cls, node_text):
+    def get_node_type_from_text(cls, node_text):
         if not node_text:
             return NodeType.ETC
         for key, value in cls.prefix.items():
@@ -70,7 +73,13 @@ class NodeMark(object):
                 return key
 
         return NodeType.ETC
-    
+
+    @classmethod
+    def get_node_type_from_icon(cls, node):
+        if [x for x in node if x.attrib == {'BUILTIN': 'folder'}]:
+            return NodeType.FACTOR
+        return NodeType.ETC
+
     @classmethod
     def get_excluding_tag(cls, node_text, exclude_tag_list):
         if not exclude_tag_list:
@@ -99,21 +108,25 @@ class NodeMark(object):
 
 class FMCTMGenerator(object):
     """generates test condition from FreeMind file"""
-
-    def __init__(self):
-        self._clsf_dict = {}
-        self._pict_exec_option = ""
-        self._insert_text = {}
-        self._link_def = {}
-        self._exclude_tag_list = []
+    _clsf_dict = {}
+    _pict_exec_option = ""
+    _insert_text = {}
+    _link_def = {}
+    _exclude_tag_list = []
     
-    def _init_gendata(self):
+    @classmethod
+    def _init_gendata(cls):
         """reset analysis data"""
-        self.__init__()
+        cls._clsf_dict = {}
+        cls._pict_exec_option = ""
+        cls._insert_text = {}
+        cls._link_def = {}
+        cls._exclude_tag_list = []
 
-    def get_last_testconditions(self):
+    @classmethod
+    def get_last_testconditions(cls):
         """return last pict data"""
-        return self._clsf_dict
+        return cls._clsf_dict
 
     @staticmethod
     def _get_node_type(node):
@@ -126,12 +139,14 @@ class FMCTMGenerator(object):
 
         attrib_text = FMCTMGenerator._get_text_str(node)
 
-        node_type = NodeMark.get_node_type(attrib_text)
+        node_type = NodeMark.get_node_type_from_text(attrib_text)
         if node_type != NodeType.ETC:
             return node_type
 
-        if [x for x in node if x.attrib == {'BUILTIN': 'folder'}]:
-            return NodeType.FACTOR
+        node_type = NodeMark.get_node_type_from_icon(node)
+        if node_type != NodeType.ETC:
+            return node_type
+
         return NodeType.VAILD_DATA
 
     @staticmethod
@@ -144,7 +159,7 @@ class FMCTMGenerator(object):
         return NodeMark.get_text_excluding_tag(text)
 
     @staticmethod
-    def append_child_text_node(dict, parent):
+    def append_child_text_node(out_dict, parent):
         """add valid child node text to dict"""
         cf_text = FMCTMGenerator._get_text_str(parent)
         if cf_text[0] == NodeMark.prefix[NodeType.FACTOR]:
@@ -157,69 +172,71 @@ class FMCTMGenerator(object):
                 text_data = FMCTMGenerator._get_text_str(node)
                 class_list.append(text_data)
         if class_list:
-            dict[cf_text] = class_list
+            out_dict[cf_text] = class_list
 
-    def _has_tag(self, node):
+    @classmethod
+    def _has_tag(cls, node):
         if not 'TEXT' in node.attrib:
             return False
 
         text = FMCTMGenerator._get_raw_text_str(node)
-        return NodeMark.get_excluding_tag(text, self._exclude_tag_list)
-  
+        return NodeMark.get_excluding_tag(text, cls._exclude_tag_list)
 
-    def _get_testcon_from_node(self, parent):
+    @classmethod
+    def _get_testcon_from_node(cls, parent):
         """reads class set from freemind node"""
-        node_type = self._get_node_type(parent)
+        node_type = cls._get_node_type(parent)
 
         if node_type == NodeType.COMMENT:
-            return self._clsf_dict
+            return cls._clsf_dict
 
-        if self._has_tag(parent):
-            return self._clsf_dict            
+        if cls._has_tag(parent):
+            return cls._clsf_dict            
 
         if node_type == NodeType.EXEC_OPTION:
             for node in [y for y in list(parent) if 'TEXT' in y.attrib]:
-                child_node_type = self._get_node_type(node)
+                child_node_type = cls._get_node_type(node)
                 if NodeType.is_valid_data_node(child_node_type):
-                    text_data = self._get_text_str(node)
-                    self._pict_exec_option = self._pict_exec_option + ' ' + text_data
-            return self._clsf_dict
+                    text_data = cls._get_text_str(node)
+                    cls._pict_exec_option = cls._pict_exec_option + ' ' + text_data
+            return cls._clsf_dict
 
         if node_type == NodeType.CONSTRAINT_DEFINITIONS or \
             node_type == NodeType.SUB_MODEL_DEFINITIONS:
             for node in [y for y in list(parent) if 'TEXT' in y.attrib]:
-                child_node_type = self._get_node_type(node)
+                child_node_type = cls._get_node_type(node)
                 if NodeType.is_valid_data_node(child_node_type):
-                    text_data = self._get_text_str(node)
-                    self._insert_text[node_type] = text_data
-            return self._clsf_dict
+                    text_data = cls._get_text_str(node)
+                    cls._insert_text[node_type] = text_data
+            return cls._clsf_dict
 
         if node_type == NodeType.FACTOR:
-            self.append_child_text_node(self._clsf_dict, parent)
-            return self._clsf_dict
+            cls.append_child_text_node(cls._clsf_dict, parent)
+            return cls._clsf_dict
 
         if node_type == NodeType.LINK_DEF:
-            self.append_child_text_node(self._link_def, parent)
-            return self._clsf_dict
+            cls.append_child_text_node(cls._link_def, parent)
+            return cls._clsf_dict
 
         # NodeType.NO_DATA or non type
         for node in list(parent):
-            self._get_testcon_from_node(node)
-        return self._clsf_dict
+            cls._get_testcon_from_node(node)
+        return cls._clsf_dict
 
-    def _replace_link_def(self):
-        for key, value_list in self._clsf_dict.items():
+    @classmethod
+    def _replace_link_def(cls):
+        for key, value_list in cls._clsf_dict.items():
             new_value_list = []
             for value_item in value_list:
                 if value_item[0] == NodeMark.prefix[NodeType.LINK_REFER]:
-                    for key_def in [keys for keys in self._link_def.keys() if value_item[1:] == keys[1:]]:
-                        new_value_list.extend(self._link_def[key_def])
+                    for key_def in [keys for keys in cls._link_def.keys() if value_item[1:] == keys[1:]]:
+                        new_value_list.extend(cls._link_def[key_def])
                 else:
                     new_value_list.append(value_item)
-            self._clsf_dict[key] = new_value_list
+            cls._clsf_dict[key] = new_value_list
 
-    
-    def get_testconditions_from_fmfile(self, freemind_file_path, exclude_tag_list=""):
+    @classmethod
+    def get_testconditions_from_fmfile(cls, freemind_file_path, exclude_tag_list):
         try:
             cls_tree = ET.parse(freemind_file_path)
         except ET.ParseError:
@@ -229,20 +246,22 @@ class FMCTMGenerator(object):
             Msg.p(Msg.ERR, 'cannot open freemind file')
             raise
 
-        return self.get_testconditions_from_fmet(cls_tree, exclude_tag_list)
+        return cls.get_testconditions_from_fmet(cls_tree, exclude_tag_list)
     
-    def get_testconditions_from_fmet(self, fm_tree, exclude_tag_list=""):
-        self._exclude_tag_list = exclude_tag_list
-        self._get_testcon_from_node(fm_tree.getroot())
-        self._replace_link_def()
-        return self._clsf_dict
+    @classmethod
+    def get_testconditions_from_fmet(cls, fm_tree, exclude_tag_list=None):
+        cls._exclude_tag_list = exclude_tag_list
+        cls._get_testcon_from_node(fm_tree.getroot())
+        cls._replace_link_def()
+        return cls._clsf_dict
 
-    def generate(self, input_file, only_gen_pictfile=False, save_pictfile=False, pictfile_path="", exclude_tag_list=""):
+    @classmethod
+    def generate(cls, input_file, only_gen_pictfile=False, save_pictfile=False, pictfile_path="", exclude_tag_list=None):
         """generates test condition from FreeMind file"""
 
-        self._init_gendata()
+        cls._init_gendata()
 
-        clsf_dict = self.get_testconditions_from_fmfile(input_file, exclude_tag_list)
+        clsf_dict = cls.get_testconditions_from_fmfile(input_file, exclude_tag_list)
 
         if not clsf_dict:
             Msg.p(Msg.ERR, 'freemind file is empty')
@@ -253,10 +272,10 @@ class FMCTMGenerator(object):
         else:
             file_path = PictRunner.DEFAULT_INPUT_FILE_PATH
 
-        PictRunner.gen_pict_input_file(file_path, clsf_dict, self._insert_text)
+        PictRunner.gen_pict_input_file(file_path, clsf_dict, cls._insert_text)
 
         if not only_gen_pictfile:
-            PictRunner.print_testcondition(file_path, self._pict_exec_option)
+            PictRunner.print_testcondition(file_path, cls._pict_exec_option)
 
         if not save_pictfile:
             PictRunner.delete_pict_file(file_path)
@@ -305,7 +324,6 @@ class Msg(object):
     def p(message_type, message):
         print('%s:%s' %(message_type, message))
 
-
 def _get_parser():
     """creates FMPict parser"""
     parser = argparse.ArgumentParser(
@@ -319,13 +337,21 @@ def _get_parser():
         '-e', '--exclude_tag_list', help='exclude specified tag in generating', type=str)
     return parser
 
-def run_standalone():
+def get_testconditions(freemind_file_path, exclude_tag_list=""):
+    FMCTMGenerator.get_testconditions_from_fmfile(freemind_file_path,
+                                                  NodeMark.get_tag_list(exclude_tag_list))
+
+def run(freemind_file_path, genparamlist=False, savepictfile=False,pict_file_path="", taglist=""):
+    FMCTMGenerator.generate(freemind_file_path, genparamlist,
+                            savepictfile, pict_file_path,
+                            NodeMark.get_tag_list(taglist))
+
+def main():
     """execute on CUI"""
     args = _get_parser().parse_args()
-    gen = FMCTMGenerator()
-    gen.generate(args.freemind_file_path, args.genparamlist,
-                 args.savepictfile, args.pict_file_path,
-                 NodeMark.get_tag_list(args.exclude_tag_list))
+    FMCTMGenerator.generate(args.freemind_file_path, args.genparamlist,
+                            args.savepictfile, args.pict_file_path,
+                            NodeMark.get_tag_list(args.exclude_tag_list))
 
 if __name__ == '__main__':
-    run_standalone()
+    main()
