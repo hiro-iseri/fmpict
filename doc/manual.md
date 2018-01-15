@@ -28,17 +28,16 @@ FMPictを利用するメリットは以下の通りです。
 
 動作確認環境：Windows 10, Mac OS X
 
-## ツール導入（TBD）
+## ツール導入
 
-1. 以下の最新版からfmpict.zipをダウンロードし、解凍します。
+「pip install fmpict」でインストールします。
+FMpictの実行は、以下のようにコマンド実行します。
 
-https://github.com/hiro-iseri/fmpict/releases
+`fmpict.py FreeMindファイル`
 
-2. fmpictフォルダに格納されたfmpict.pyを、適当な場所に格納し使用します。1ファイルで完結しているため、その他インストール作業は不要です。
-FMpictの実行には、以下のようにコマンドを使います。
+詳細は以下を参照ください。
 
-`python fmpict.py FreeMindファイル`
-
+[howto_setup.md](howto_setup.md)
 
 ## 使い方解説
 
@@ -111,7 +110,7 @@ pict PICT入力データファイル /c
 
 ### FMPictの実行オプション
 
-fmpict.pyは実行オプションをいくつか受け取ります。
+fmpictは実行オプションが設定されています。
 
 #### オプション引数
 
@@ -127,7 +126,7 @@ fmpict.pyは実行オプションをいくつか受け取ります。
 実行例：sample.mmを入力に、pict_list.txtにPICT入力ファイルを保存
 
 ```
-python fmpict.py sample.mm -s -g -p pict_list.txt
+fmpict sample.mm -s -g -p pict_list.txt
 ```
 
 #### ヘルプ一覧
