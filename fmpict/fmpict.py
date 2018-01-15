@@ -47,14 +47,16 @@ class NodeMark(object):
                           NodeType.CONSTRAINT_DEFINITIONS:'{constraint_definitions}'}
     mark_word = _INITIAL_MARK_WORD
     _RE_TAG_WORD = re.compile(r"\[[\w_\-]+\]")
-    
+
     _INITIAL_MARK_ICON = {NodeType.FACTOR:{'BUILTIN': 'folder'}}
+    mark_icon = _INITIAL_MARK_ICON
 
     @classmethod
     def init(cls):
         """reset customize"""
         cls.prefix = cls._INITIAL_PREFIX
         cls.mark_word = cls._INITIAL_MARK_WORD
+        cls.mark_icon = cls._INITIAL_MARK_ICON
     
     @classmethod
     def get_node_type_from_text(cls, node_text):
@@ -91,7 +93,7 @@ class NodeMark(object):
 
     @classmethod
     def get_tag(cls, node_text):
-        tag_set = cls._RE_TAG_WORD.findall(node_text)
+        return cls._RE_TAG_WORD.findall(node_text)
 
     @classmethod
     def trim_tag(cls, node_text):
@@ -154,13 +156,12 @@ class FMCTMGenerator(object):
         return NodeType.VAILD_DATA
 
     @staticmethod
-    def _get_raw_text_str(node):
+    def _get_text_with_tag(node):
         return node.attrib['TEXT'].encode(sys.stdout.encoding).decode(sys.stdout.encoding)
 
     @staticmethod
     def _get_text_str(node):
-        text = FMCTMGenerator._get_raw_text_str(node)
-        return NodeMark.trim_tag(text)
+        return NodeMark.trim_tag(FMCTMGenerator._get_text_with_tag(node))
 
     @staticmethod
     def append_child_text_node(out_dict, parent):
@@ -183,7 +184,7 @@ class FMCTMGenerator(object):
         if not 'TEXT' in node.attrib:
             return False
 
-        text = FMCTMGenerator._get_raw_text_str(node)
+        text = FMCTMGenerator._get_text_with_tag(node)
         return NodeMark.get_excluding_tag(text, cls._tag_list)
 
     @classmethod
@@ -194,9 +195,9 @@ class FMCTMGenerator(object):
         if node_type == NodeType.COMMENT:
             return cls._clsf_dict
 
-        if NodeMark.get_tag(FMCTMGenerator._get_raw_text_str(parent)):
+        if 'TEXT' in parent.attrib and NodeMark.get_tag(FMCTMGenerator._get_text_with_tag(parent)):
             if not cls._has_tag(parent):
-                return cls._clsf_dict            
+                return cls._clsf_dict
 
         if node_type == NodeType.EXEC_OPTION:
             for node in [y for y in list(parent) if 'TEXT' in y.attrib]:
