@@ -6,7 +6,8 @@ FreeMindで、テストツールPICTを操作するツールです。
 
 ## 使い方
 
-実行例「python fmctm.py FreeMindファイル」  
+インストール「pip install fmpict」
+実行例「fmpict FreeMindファイル」  
 
 詳細な使い方、動作環境は「doc/manual.md」を参照ください。
 
