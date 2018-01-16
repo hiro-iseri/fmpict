@@ -83,7 +83,7 @@ class NodeMark(object):
         return NodeType.ETC
 
     @classmethod
-    def get_excluding_tag(cls, node_text, exclude_tag_list):
+    def get_hit_tag(cls, node_text, exclude_tag_list):
         if not exclude_tag_list:
             return []
 
@@ -185,7 +185,7 @@ class FMCTMGenerator(object):
             return False
 
         text = FMCTMGenerator._get_text_with_tag(node)
-        return NodeMark.get_excluding_tag(text, cls._tag_list)
+        return NodeMark.get_hit_tag(text, cls._tag_list)
 
     @classmethod
     def _get_testcon_from_node(cls, parent):
@@ -196,7 +196,7 @@ class FMCTMGenerator(object):
             return cls._clsf_dict
 
         if 'TEXT' in parent.attrib and NodeMark.get_tag(FMCTMGenerator._get_text_with_tag(parent)):
-            if not cls._has_tag(parent):
+            if cls._has_tag(parent):
                 return cls._clsf_dict
 
         if node_type == NodeType.EXEC_OPTION:
@@ -340,26 +340,24 @@ def _get_parser():
         '-g', '--genparamlist', help='execute until pict file generation', action="store_true")
     parser.add_argument('-s', '--savepictfile', help='save pict file', action="store_true")
     parser.add_argument(
-        '-e', '--exclude_tag_list', help='exclude specified tag in generating', type=str)
-    parser.add_argument(
         '-t', '--select_tag_list', help='select specified tag in generating', type=str)
     return parser
 
-def get_testconditions(freemind_file_path, exclude_tag_list=""):
+def get_testconditions(freemind_file_path, tag_list=""):
     return FMCTMGenerator.get_testconditions_from_fmfile(freemind_file_path,
-                                                         NodeMark.get_tag_list(exclude_tag_list))
+                                                         NodeMark.get_tag_list(tag_list))
 
-def run(freemind_file_path, genparamlist=False, savepictfile=False,pict_file_path="", ex_taglist=""):
+def run(freemind_file_path, genparamlist=False, savepictfile=False,pict_file_path="", tag_list=""):
     FMCTMGenerator.generate(freemind_file_path, genparamlist,
                             savepictfile, pict_file_path,
-                            NodeMark.get_tag_list(ex_taglist))
+                            NodeMark.get_tag_list(tag_list))
 
 def main():
     """execute on CUI"""
     args = _get_parser().parse_args()
     FMCTMGenerator.generate(args.freemind_file_path, args.genparamlist,
                             args.savepictfile, args.pict_file_path,
-                            NodeMark.get_tag_list(args.exclude_tag_list))
+                            NodeMark.get_tag_list(args.select_tag_list))
 
 if __name__ == '__main__':
     main()
