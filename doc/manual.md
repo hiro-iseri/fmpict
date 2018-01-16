@@ -33,7 +33,7 @@ FMPictを利用するメリットは以下の通りです。
 「pip install fmpict」でインストールします。
 FMpictの実行は、以下のようにコマンド実行します。
 
-`fmpict.py FreeMindファイル`
+`fmpict FreeMindファイル`
 
 詳細は以下を参照ください。
 
@@ -122,6 +122,8 @@ fmpictは実行オプションが設定されています。
     * PICT実行をスキップします。PICT入力ファイル生成のみ行います。
 * -s
     * PICT入力ファイルを削除せず保持します（このオプションがない場合、PICT入力ファイルは自動削除されます）。
+* -t
+    * タグ絞り込みを行います。"[tag名]"を列記した文字列を指定します。指定された文字列以外のタグノードは解析から除外されます。
 
 実行例：sample.mmを入力に、pict_list.txtにPICT入力ファイルを保存
 
@@ -142,12 +144,13 @@ optional arguments:
                         save pict file to specified path
   -g, --genparamlist    execute until pict file generation
   -s, --savepictfile    save pict file
+  -t SELECT_TAG_LIST, --select_tag_list SELECT_TAG_LIST
+                        select specified tag in generating
 ```
 
 ## ライセンスや制限事項
 
-FMPictのコードはMITライセンスに基づいています。  
-用途に制限はありません。開発者は、本ツールで発生した損害や問題の責任を負いません。ユーザの自己責任に基づいて使用ください。
+FMPictはMITライセンスに基づいています。 用途に制限はありません。
 
 ## フィードバック先
 

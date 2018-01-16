@@ -46,6 +46,7 @@ class NodeMark(object):
                           NodeType.SUB_MODEL_DEFINITIONS:'{sub_model_definitions}',
                           NodeType.CONSTRAINT_DEFINITIONS:'{constraint_definitions}'}
     mark_word = _INITIAL_MARK_WORD
+
     _RE_TAG_WORD = re.compile(r"\[[\w_\-]+\]")
 
     _INITIAL_MARK_ICON = {NodeType.FACTOR:{'BUILTIN': 'folder'}}
@@ -57,30 +58,34 @@ class NodeMark(object):
         cls.prefix = cls._INITIAL_PREFIX
         cls.mark_word = cls._INITIAL_MARK_WORD
         cls.mark_icon = cls._INITIAL_MARK_ICON
-    
+
     @classmethod
-    def get_node_type_from_text(cls, node_text):
+    def get_node_type(cls, node):
+        try:
+            node_text = NodeText.get_text(node)
+        except KeyError:
+            return NodeType.NO_DATA
+
         if not node_text:
-            return NodeType.ETC
+            return NodeType.NO_DATA
+
         for key, value in cls.prefix.items():
             if node_text[0] == value:
                 if len(node_text) == 1:
                     # empty TEXT
                     return NodeType.NO_DATA
                 else:
-                    return key        
+                    return key
 
         for key, value in cls.mark_word.items():
             if value in node_text:
                 return key
 
-        return NodeType.ETC
+        for key, value in cls.mark_icon.items():
+            if [x for x in node if x.attrib == value]:
+                return key
 
-    @classmethod
-    def get_node_type_from_icon(cls, node):
-        if [x for x in node if x.attrib == {'BUILTIN': 'folder'}]:
-            return NodeType.FACTOR
-        return NodeType.ETC
+        return NodeType.VAILD_DATA
 
     @classmethod
     def get_hit_tag(cls, node_text, exclude_tag_list):
@@ -112,6 +117,11 @@ class NodeMark(object):
             return None
         return cls._RE_TAG_WORD.findall(option_text)
 
+class NodeText(object):
+    @staticmethod
+    def get_text(node):
+        return node.attrib['TEXT'].encode(sys.stdout.encoding).decode(sys.stdout.encoding)
+
 class FMCTMGenerator(object):
     """generates test condition from FreeMind file"""
     _clsf_dict = {}
@@ -129,79 +139,71 @@ class FMCTMGenerator(object):
         cls._link_def = {}
         cls._tag_list = []
 
+    @staticmethod
+    def is_ignore_node(node):
+        node_type = NodeType.is_valid_data_node(NodeMark.get_node_type(node))
+        return not node_type == NodeType.LINK_REFER and node_type == NodeType.VAILD_DATA
+
+    @classmethod
+    def pickup_end_node_text(cls, parent, end_node_list):
+        if FMCTMGenerator.is_ignore_node(parent):
+            return end_node_list
+
+        try:
+            if len(list(parent)) == 0:
+                end_node_list.append(NodeText.get_text(parent))
+        except KeyError:
+            return end_node_list
+
+        for node in list(parent):
+            end_node_list = cls.pickup_end_node_text(node, end_node_list)
+
+        return end_node_list
+
     @classmethod
     def get_last_testconditions(cls):
         """return last pict data"""
         return cls._clsf_dict
 
     @staticmethod
-    def _get_node_type(node):
-        """get node type by node.attrib"""
-        if not 'TEXT' in node.attrib:
-            return NodeType.NO_DATA
-        if not node.attrib['TEXT']:
-            # empty TEXT
-            return NodeType.NO_DATA
-
-        attrib_text = FMCTMGenerator._get_text_str(node)
-
-        node_type = NodeMark.get_node_type_from_text(attrib_text)
-        if node_type != NodeType.ETC:
-            return node_type
-
-        node_type = NodeMark.get_node_type_from_icon(node)
-        if node_type != NodeType.ETC:
-            return node_type
-
-        return NodeType.VAILD_DATA
-
-    @staticmethod
-    def _get_text_with_tag(node):
-        return node.attrib['TEXT'].encode(sys.stdout.encoding).decode(sys.stdout.encoding)
-
-    @staticmethod
     def _get_text_str(node):
-        return NodeMark.trim_tag(FMCTMGenerator._get_text_with_tag(node))
+        return NodeMark.trim_tag(NodeText.get_text(node))
 
-    @staticmethod
-    def append_child_text_node(out_dict, parent):
+    @classmethod
+    def append_child_text_node(cls, out_dict, parent):
         """add valid child node text to dict"""
+        end_node = []
+        end_node = cls.pickup_end_node_text(parent, end_node)
         cf_text = FMCTMGenerator._get_text_str(parent)
         if cf_text[0] == NodeMark.prefix[NodeType.FACTOR]:
             cf_text = cf_text[1:]
 
-        class_list = []
-        for node in [x for x in list(parent) if 'TEXT' in x.attrib]:
-            child_node_type = FMCTMGenerator._get_node_type(node)
-            if NodeType.is_valid_data_node(child_node_type):
-                text_data = FMCTMGenerator._get_text_str(node)
-                class_list.append(text_data)
-        if class_list:
-            out_dict[cf_text] = class_list
+        if end_node:
+            out_dict[cf_text] = end_node
 
     @classmethod
     def _has_tag(cls, node):
         if not 'TEXT' in node.attrib:
             return False
 
-        text = FMCTMGenerator._get_text_with_tag(node)
+        text = NodeText.get_text(node)
         return NodeMark.get_hit_tag(text, cls._tag_list)
 
     @classmethod
     def _get_testcon_from_node(cls, parent):
         """reads class set from freemind node"""
-        node_type = cls._get_node_type(parent)
+        node_type = NodeMark.get_node_type(parent)
 
         if node_type == NodeType.COMMENT:
             return cls._clsf_dict
 
-        if 'TEXT' in parent.attrib and NodeMark.get_tag(FMCTMGenerator._get_text_with_tag(parent)):
+        if 'TEXT' in parent.attrib and NodeMark.get_tag(NodeText.get_text(parent)):
             if cls._has_tag(parent):
                 return cls._clsf_dict
 
         if node_type == NodeType.EXEC_OPTION:
             for node in [y for y in list(parent) if 'TEXT' in y.attrib]:
-                child_node_type = cls._get_node_type(node)
+                child_node_type = NodeMark.get_node_type(node)
                 if NodeType.is_valid_data_node(child_node_type):
                     text_data = cls._get_text_str(node)
                     cls._pict_exec_option = cls._pict_exec_option + ' ' + text_data
@@ -210,7 +212,7 @@ class FMCTMGenerator(object):
         if node_type == NodeType.CONSTRAINT_DEFINITIONS or \
             node_type == NodeType.SUB_MODEL_DEFINITIONS:
             for node in [y for y in list(parent) if 'TEXT' in y.attrib]:
-                child_node_type = cls._get_node_type(node)
+                child_node_type = NodeMark.get_node_type(node)
                 if NodeType.is_valid_data_node(child_node_type):
                     text_data = cls._get_text_str(node)
                     cls._insert_text[node_type] = text_data
@@ -358,6 +360,7 @@ def main():
     FMCTMGenerator.generate(args.freemind_file_path, args.genparamlist,
                             args.savepictfile, args.pict_file_path,
                             NodeMark.get_tag_list(args.select_tag_list))
+
 
 if __name__ == '__main__':
     main()
