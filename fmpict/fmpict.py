@@ -59,6 +59,16 @@ class NodeMark(object):
         cls.mark_word = cls._INITIAL_MARK_WORD
         cls.mark_icon = cls._INITIAL_MARK_ICON
 
+    @staticmethod
+    def is_factor(node):
+        result = True
+        for child in list(node):
+            if NodeType.FACTOR != NodeMark.get_node_type(child):
+                result = not FMCTMGenerator.is_factor(child)
+            else:
+                return False
+        return result
+
     @classmethod
     def get_node_type(cls, node):
         try:
@@ -76,7 +86,6 @@ class NodeMark(object):
                     return NodeType.NO_DATA
                 else:
                     return key
-
         for key, value in cls.mark_word.items():
             if value in node_text:
                 return key
@@ -139,10 +148,22 @@ class FMCTMGenerator(object):
         cls._link_def = {}
         cls._tag_list = []
 
+    import traceback
     @staticmethod
     def is_ignore_node(node):
         node_type = NodeType.is_valid_data_node(NodeMark.get_node_type(node))
+        #return not NodeType.is_valid_data_node(NodeMark.get_node_type(node))
         return not node_type == NodeType.LINK_REFER and node_type == NodeType.VAILD_DATA
+
+    @staticmethod
+    def is_factor(node):
+        result = True
+        for child in list(node):
+            if NodeType.FACTOR != NodeMark.get_node_type(child):
+                result = FMCTMGenerator.is_factor(child)
+            else:
+                return False
+        return result
 
     @classmethod
     def pickup_end_node_text(cls, parent, end_node_list):
@@ -193,13 +214,7 @@ class FMCTMGenerator(object):
     def _get_testcon_from_node(cls, parent):
         """reads class set from freemind node"""
         node_type = NodeMark.get_node_type(parent)
-
-        if node_type == NodeType.COMMENT:
-            return cls._clsf_dict
-
-        if 'TEXT' in parent.attrib and NodeMark.get_tag(NodeText.get_text(parent)):
-            if cls._has_tag(parent):
-                return cls._clsf_dict
+        assert node_type != NodeType.COMMENT
 
         if node_type == NodeType.EXEC_OPTION:
             for node in [y for y in list(parent) if 'TEXT' in y.attrib]:
@@ -219,8 +234,9 @@ class FMCTMGenerator(object):
             return cls._clsf_dict
 
         if node_type == NodeType.FACTOR:
-            cls.append_child_text_node(cls._clsf_dict, parent)
-            return cls._clsf_dict
+            if cls.is_factor(parent):
+                cls.append_child_text_node(cls._clsf_dict, parent)
+                return cls._clsf_dict
 
         if node_type == NodeType.LINK_DEF:
             cls.append_child_text_node(cls._link_def, parent)
@@ -256,8 +272,30 @@ class FMCTMGenerator(object):
 
         return cls.get_testconditions_from_fmet(cls_tree, tag_list)
     
+    @staticmethod
+    def print_fmtree(root):
+        if 'TEXT' in root.attrib:
+            print root.attrib['TEXT']
+        for node in root:
+            FMCTMGenerator.print_fmtree(node)
+    
+    @classmethod
+    def preprocess_fmtree(cls, root, tag_list=None):
+        for node in root:
+            node_type = NodeMark.get_node_type(node) 
+            if node_type == NodeType.COMMENT:
+                root.remove(node)
+            if 'TEXT' in node.attrib:
+                if NodeMark.get_tag(NodeText.get_text(node)):
+                    if not NodeMark.get_hit_tag(node, tag_list):
+                        root.remove(node)
+                if node.attrib['TEXT'] == "":
+                    root.remove(node)
+            cls.preprocess_fmtree(node)
+
     @classmethod
     def get_testconditions_from_fmet(cls, fm_tree, tag_list=None):
+        cls.preprocess_fmtree(fm_tree.getroot())
         cls._tag_list = tag_list
         cls._get_testcon_from_node(fm_tree.getroot())
         cls._replace_link_def()
@@ -324,13 +362,16 @@ class PictRunner(object):
 
 class Msg(object):
     """managing message for users"""
-    ERR = "Error"
-    WRN = "Warning"
-    INF = "Info"
+    ERR = 3
+    WRN = 2
+    INF = 1
+    MSG_LEVEL_DICT = {ERR:"Error", WRN:"Warning", INF:"Info"}
+    msg_level = INF
 
     @staticmethod
     def p(message_type, message):
-        print('%s:%s'%(message_type, message))
+        if Msg.msg_level >= message_type:
+            print('%s:%s'%(message_type, message))
 
 def _get_parser():
     """creates FMPict parser"""
