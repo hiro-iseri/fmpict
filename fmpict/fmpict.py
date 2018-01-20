@@ -72,7 +72,7 @@ class NodeMark(object):
     @classmethod
     def get_node_type(cls, node):
         try:
-            node_text = NodeText.get_text(node)
+            node_text = cls.trim_tag(NodeText.get_text(node))
         except KeyError:
             return NodeType.NO_DATA
 
@@ -86,6 +86,7 @@ class NodeMark(object):
                     return NodeType.NO_DATA
                 else:
                     return key
+
         for key, value in cls.mark_word.items():
             if value in node_text:
                 return key
@@ -148,13 +149,6 @@ class FMCTMGenerator(object):
         cls._link_def = {}
         cls._tag_list = []
 
-    import traceback
-    @staticmethod
-    def is_ignore_node(node):
-        node_type = NodeType.is_valid_data_node(NodeMark.get_node_type(node))
-        #return not NodeType.is_valid_data_node(NodeMark.get_node_type(node))
-        return not node_type == NodeType.LINK_REFER and node_type == NodeType.VAILD_DATA
-
     @staticmethod
     def is_factor(node):
         result = True
@@ -167,9 +161,6 @@ class FMCTMGenerator(object):
 
     @classmethod
     def pickup_end_node_text(cls, parent, end_node_list):
-        if FMCTMGenerator.is_ignore_node(parent):
-            return end_node_list
-
         try:
             if len(list(parent)) == 0:
                 end_node_list.append(NodeText.get_text(parent))
@@ -177,8 +168,8 @@ class FMCTMGenerator(object):
             return end_node_list
 
         for node in list(parent):
-            end_node_list = cls.pickup_end_node_text(node, end_node_list)
-
+            if NodeType.is_valid_data_node(NodeMark.get_node_type(node)):
+                end_node_list = cls.pickup_end_node_text(node, end_node_list)
         return end_node_list
 
     @classmethod
@@ -213,6 +204,7 @@ class FMCTMGenerator(object):
     @classmethod
     def _get_testcon_from_node(cls, parent):
         """reads class set from freemind node"""
+
         node_type = NodeMark.get_node_type(parent)
         assert node_type != NodeType.COMMENT
 
@@ -285,17 +277,19 @@ class FMCTMGenerator(object):
             node_type = NodeMark.get_node_type(node) 
             if node_type == NodeType.COMMENT:
                 root.remove(node)
+
             if 'TEXT' in node.attrib:
-                if NodeMark.get_tag(NodeText.get_text(node)):
-                    if not NodeMark.get_hit_tag(node, tag_list):
+                if tag_list and NodeMark.get_tag(NodeText.get_text(node)):
+                    if not NodeMark.get_hit_tag(NodeText.get_text(node), tag_list):
                         root.remove(node)
                 if node.attrib['TEXT'] == "":
                     root.remove(node)
-            cls.preprocess_fmtree(node)
+                node.attrib['TEXT'] = NodeMark.trim_tag(node.attrib['TEXT'])
+            cls.preprocess_fmtree(node, tag_list)
 
     @classmethod
     def get_testconditions_from_fmet(cls, fm_tree, tag_list=None):
-        cls.preprocess_fmtree(fm_tree.getroot())
+        cls.preprocess_fmtree(fm_tree.getroot(), tag_list)
         cls._tag_list = tag_list
         cls._get_testcon_from_node(fm_tree.getroot())
         cls._replace_link_def()
@@ -304,7 +298,6 @@ class FMCTMGenerator(object):
     @classmethod
     def generate(cls, input_file, only_gen_pictfile=False, save_pictfile=False, pictfile_path="", tag_list=None):
         """generates test condition from FreeMind file"""
-
         cls._init_gendata()
 
         clsf_dict = cls.get_testconditions_from_fmfile(input_file, tag_list)

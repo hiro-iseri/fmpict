@@ -6,7 +6,7 @@
 
 ## ツール導入
 
-### 事前環境構築
+### 1. 事前環境構築
 
 * 以下からFreeMindをインストールします。  
     * https://ja.osdn.net/projects/freemind/
@@ -21,19 +21,35 @@
     * 手順は以下など一般的な情報を参考にしてください。
         * https://qiita.com/suzuki_y/items/3261ffa9b67410803443
 
-### ツールインストール
+### 2. ツールインストール
 
-* 「pip install fmpict」を実行します。
+#### 推奨インストール方法
 
-## 環境設定
+以下を実行します。
+
+pip install fmpict
+
+#### オフライン環境へのインストール方法
+
+以下から最新版をダウンロードし、ソースコードを解凍したフォルダで以下を実行ください。
+
+python setup.py install 
+
+## 3. 環境設定
 
 * pict.exeをスクリプトから参照可能にします。
     * Windowsなら、環境変数PATHに、PICTのインストールフォルダを追加します。
 
-## 動作確認
+## 4. 動作確認
 
 1. CUI環境（Windowsならコマンドプロンプト、Macならターミナル）で以下を実行します。  
 
-fmpict tests/fm_sample/simple.mm
+fmpict 対象マインドマップファイル
 
-3. PICT実行結果（テスト条件組み合わせ一覧）が出力されたら環境構築は完了です。
+3. fmpictコマンドが存在しないといったエラーが表示されなければセットアップは完了です。
+
+## fmpictのアップグレード
+
+以下を実行します。
+
+pip install -U fmpict
