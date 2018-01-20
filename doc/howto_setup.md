@@ -2,7 +2,7 @@
 
 ## このドキュメントについて
 
-このドキュメントでは、FMPictの最初の環境構築について手順を解説します。
+このドキュメントでは、FMPictのインストール手順を解説します。
 
 ## ツール導入
 
@@ -13,12 +13,12 @@
 * PICTをインストールします。
     * Windows版は以下の20.PICTからダウンロード
         * http://www.pairwise.org/tools.asp
-    * Mac、Linuxは以下を参考にしてください
-        * http://goyoki.hatenablog.com/entry/2016/02/17/020256
+    * Mac、Linuxは以下を参照ください
+        * http://goyoki.hatenablog.com/entry/2016/02/17/020256
 * 以下からPythonをインストールします。
     * https://www.python.org/downloads/
 * [Python2.7でpip未導入の場合]pipをインストールします。
-    * 手順は以下など一般的な情報を参考にしてください。
+    * 手順は以下など一般的な情報を参照ください。
         * https://qiita.com/suzuki_y/items/3261ffa9b67410803443
 
 ### 2. ツールインストール
@@ -29,15 +29,19 @@
 
 pip install fmpict
 
-#### オフライン環境へのインストール方法
+#### オフライン環境へのインストール方法(前述のpipインストールより古い場合があります)
 
-以下から最新版をダウンロードし、ソースコードを解凍したフォルダで以下を実行ください。
+1. 以下から最新版のSource Codeをダウンロードしてください。
+
+https://github.com/hiro-iseri/fmpict/releases
+
+2. ソースコードを解凍したフォルダで以下を実行ください。
 
 python setup.py install 
 
 ## 3. 環境設定
 
-* pict.exeをスクリプトから参照可能にします。
+* pict.exeをfmpictから参照可能にします。
     * Windowsなら、環境変数PATHに、PICTのインストールフォルダを追加します。
 
 ## 4. 動作確認
