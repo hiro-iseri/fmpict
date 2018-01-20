@@ -2,7 +2,8 @@
 
 ## このドキュメントについて
 
-このドキュメントでは、FMPictのインストール手順を解説します。
+このドキュメントでは、FMPictのインストール手順を解説します。  
+[manual.md](manual.md) の補足ドキュメントです。
 
 ## ツール導入
 
@@ -13,12 +14,12 @@
 * PICTをインストールします。
     * Windows版は以下の20.PICTからダウンロード
         * http://www.pairwise.org/tools.asp
-    * Mac、Linuxは以下を参照ください
-        * http://goyoki.hatenablog.com/entry/2016/02/17/020256
+    * Mac、Linuxは以下を参照ください
+        * http://goyoki.hatenablog.com/entry/2016/02/17/020256
 * 以下からPythonをインストールします。
     * https://www.python.org/downloads/
 * [Python2.7でpip未導入の場合]pipをインストールします。
-    * 手順は以下など一般的な情報を参照ください。
+    * 手順は以下など一般的な情報を参照ください。
         * https://qiita.com/suzuki_y/items/3261ffa9b67410803443
 
 ### 2. ツールインストール
@@ -27,9 +28,11 @@
 
 以下を実行します。
 
+```
 pip install fmpict
+```
 
-#### オフライン環境へのインストール方法(前述のpipインストールより古い場合があります)
+#### オフライン環境へのインストール方法(最新版をインストールできない場合があります)
 
 1. 以下から最新版のSource Codeをダウンロードしてください。
 
@@ -37,7 +40,9 @@ https://github.com/hiro-iseri/fmpict/releases
 
 2. ソースコードを解凍したフォルダで以下を実行ください。
 
+```
 python setup.py install 
+```
 
 ## 3. 環境設定
 
@@ -48,12 +53,16 @@ python setup.py install
 
 1. CUI環境（Windowsならコマンドプロンプト、Macならターミナル）で以下を実行します。  
 
+```
 fmpict 対象マインドマップファイル
+```
 
-3. fmpictコマンドが存在しないといったエラーが表示されなければセットアップは完了です。
+2. fmpictコマンドが存在しないといったエラーが表示されなければセットアップは完了です。
 
 ## fmpictのアップグレード
 
 以下を実行します。
 
+```
 pip install -U fmpict
+```
