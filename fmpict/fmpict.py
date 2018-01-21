@@ -267,7 +267,7 @@ class FMCTMGenerator(object):
     @staticmethod
     def print_fmtree(root):
         if 'TEXT' in root.attrib:
-            print root.attrib['TEXT']
+            print(root.attrib['TEXT'])
         for node in root:
             FMCTMGenerator.print_fmtree(node)
     
