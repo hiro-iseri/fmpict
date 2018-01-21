@@ -1,1 +1,3 @@
-from fmpict import *
+
+from fmpict.fmpict import *
+

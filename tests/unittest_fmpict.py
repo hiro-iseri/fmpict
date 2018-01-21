@@ -25,7 +25,7 @@ class UnitTestFMPict(unittest.TestCase):
         result = FMCTMGenerator.get_testconditions_from_fmfile(self._test_dir_path + 'simple.mm')
 
         for key, value in result.items():
-            self.assertTrue(expect.has_key(key))
+            self.assertTrue(key in expect)
             self.assertEqual(set(value), set(expect[key]))
         
 if __name__ == '__main__':
