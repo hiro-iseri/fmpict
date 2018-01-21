@@ -7,7 +7,7 @@ import shutil
 
 root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.insert(0, root_path)
-from fmpict import FMCTMGenerator
+from fmpict.fmpict import FMCTMGenerator
 
 
 class UnitTestFMPict(unittest.TestCase):

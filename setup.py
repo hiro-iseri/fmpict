@@ -32,7 +32,7 @@ setup(
     packages=['fmpict'],
     entry_points={  # Optional
         'console_scripts': [
-            'fmpict = fmpict:main',
+            'fmpict = fmpict.fmpict:main',
         ],
     }
 )
