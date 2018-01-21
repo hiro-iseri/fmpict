@@ -34,14 +34,14 @@ pip install fmpict
 
 #### オフライン環境へのインストール方法(最新版をインストールできない場合があります)
 
-1. 以下から最新版のSource Codeをダウンロードしてください。
+1. 以下から最新版の.whlファイルをダウンロードしてください。
 
-https://github.com/hiro-iseri/fmpict/releases
+https://pypi.python.org/pypi/fmpict
 
 2. ソースコードを解凍したフォルダで以下を実行ください。
 
 ```
-python setup.py install 
+pip install ダウンロードした.whlファイル
 ```
 
 ## 3. 環境設定

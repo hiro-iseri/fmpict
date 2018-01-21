@@ -9,7 +9,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='fmpict',
-    version='0.0.3',
+    version='0.0.4',
     description='Combinatorial testing tool using FreeMind and PICT',
     author='Hiroki Iseri',
     keywords='Combinatorial testing tool',
