@@ -59,16 +59,6 @@ class NodeMark(object):
         cls.mark_word = cls._INITIAL_MARK_WORD
         cls.mark_icon = cls._INITIAL_MARK_ICON
 
-    @staticmethod
-    def is_factor(node):
-        result = True
-        for child in list(node):
-            if NodeType.FACTOR != NodeMark.get_node_type(child):
-                result = not FMCTMGenerator.is_factor(child)
-            else:
-                return False
-        return result
-
     @classmethod
     def get_node_type(cls, node):
         try:
@@ -107,10 +97,6 @@ class NodeMark(object):
         return ex_set & tag_set
 
     @classmethod
-    def get_tag(cls, node_text):
-        return cls._RE_TAG_WORD.findall(node_text)
-
-    @classmethod
     def trim_tag(cls, node_text):
         if not node_text:
             return node_text
@@ -119,18 +105,19 @@ class NodeMark(object):
         tag_set = set(cls._RE_TAG_WORD.findall(node_text))
         for tag in tag_set:
             text = text.replace(tag, "")
-        return text 
+        return text
 
     @classmethod
-    def get_tag_list(cls, option_text):
+    def tag_text_to_list(cls, option_text):
         if not option_text:
             return None
         return cls._RE_TAG_WORD.findall(option_text)
 
 class NodeText(object):
+    encode = sys.stdout.encoding
     @staticmethod
     def get_text(node):
-        return node.attrib['TEXT'].encode(sys.stdout.encoding).decode(sys.stdout.encoding)
+        return node.attrib['TEXT'].encode(NodeText.encode).decode(NodeText.encode)
 
 class FMCTMGenerator(object):
     """generates test condition from FreeMind file"""
@@ -263,14 +250,15 @@ class FMCTMGenerator(object):
             raise
 
         return cls.get_testconditions_from_fmet(cls_tree, tag_list)
-    
+
     @staticmethod
     def print_fmtree(root):
+        '''print all node text for debug'''
         if 'TEXT' in root.attrib:
             print(root.attrib['TEXT'])
         for node in root:
             FMCTMGenerator.print_fmtree(node)
-    
+
     @classmethod
     def preprocess_fmtree(cls, root, tag_list=None):
         for node in root:
@@ -279,7 +267,7 @@ class FMCTMGenerator(object):
                 root.remove(node)
 
             if 'TEXT' in node.attrib:
-                if tag_list and NodeMark.get_tag(NodeText.get_text(node)):
+                if tag_list and NodeMark.tag_text_to_list(NodeText.get_text(node)):
                     if not NodeMark.get_hit_tag(NodeText.get_text(node), tag_list):
                         root.remove(node)
                 if node.attrib['TEXT'] == "":
@@ -381,19 +369,19 @@ def _get_parser():
 
 def get_testconditions(freemind_file_path, tag_list=""):
     return FMCTMGenerator.get_testconditions_from_fmfile(freemind_file_path,
-                                                         NodeMark.get_tag_list(tag_list))
+                                                         NodeMark.tag_text_to_list(tag_list))
 
 def run(freemind_file_path, genparamlist=False, savepictfile=False,pict_file_path="", tag_list=""):
     FMCTMGenerator.generate(freemind_file_path, genparamlist,
                             savepictfile, pict_file_path,
-                            NodeMark.get_tag_list(tag_list))
+                            NodeMark.tag_text_to_list(tag_list))
 
 def main():
     """execute on CUI"""
     args = _get_parser().parse_args()
     FMCTMGenerator.generate(args.freemind_file_path, args.genparamlist,
                             args.savepictfile, args.pict_file_path,
-                            NodeMark.get_tag_list(args.select_tag_list))
+                            NodeMark.tag_text_to_list(args.select_tag_list))
 
 
 if __name__ == '__main__':
