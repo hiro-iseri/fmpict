@@ -63,7 +63,7 @@ FMpictの実行は、以下のようにコマンド実行します。
 
 以下の例ですと「#メモ」とその子孫ノードは無視されます。
 
-![basic_rule](image/.basic_rule.png)
+![basic_rule](image/basic_rule.png)
 
 ### テスト条件ノード、値ノードの書き方
 
@@ -73,7 +73,7 @@ FMpictの実行は、以下のようにコマンド実行します。
 
 以下の例ですと、「文字コード」「半角・全角」「文字長」がテスト条件としてピックアップされます。
 
-![basic_rule](image/.basic_rule.png)
+![basic_rule](image/basic_rule.png)
 
 上記の図でFMPictを実行した場合、以下のテキストデータが生成され、PICTに入力されます。
 
