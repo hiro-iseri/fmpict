@@ -47,7 +47,7 @@ class NodeMark(object):
                           NodeType.CONSTRAINT_DEFINITIONS:'{constraint_definitions}'}
     mark_word = _INITIAL_MARK_WORD
 
-    _RE_TAG_WORD = re.compile(r"\[[\w_\-]+\]")
+    _RE_TAG_WORD = re.compile(r"^\[[\w_\-]+\]")
 
     _INITIAL_MARK_ICON = {NodeType.FACTOR:{'BUILTIN': 'folder'}}
     mark_icon = _INITIAL_MARK_ICON
@@ -93,7 +93,7 @@ class NodeMark(object):
             return []
 
         ex_set = set(exclude_tag_list)
-        tag_set = set(cls._RE_TAG_WORD.findall(node_text))
+        tag_set = set(cls.tag_text_to_list(node_text))
         return ex_set & tag_set
 
     @classmethod
@@ -102,7 +102,7 @@ class NodeMark(object):
             return node_text
 
         text = node_text
-        tag_set = set(cls._RE_TAG_WORD.findall(node_text))
+        tag_set = set(cls.tag_text_to_list(node_text))
         for tag in tag_set:
             text = text.replace(tag, "")
         return text
@@ -111,7 +111,15 @@ class NodeMark(object):
     def tag_text_to_list(cls, option_text):
         if not option_text:
             return None
-        return cls._RE_TAG_WORD.findall(option_text)
+        temp = option_text
+        output = []
+        while True:
+            mat = cls._RE_TAG_WORD.match(temp)
+            if not mat:
+                break
+            output.append(mat.group())
+            temp = temp.replace(mat.group(), "")
+        return output
 
 class NodeText(object):
     encode = sys.stdout.encoding
