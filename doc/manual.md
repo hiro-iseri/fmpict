@@ -154,7 +154,7 @@ fmpict 例ファイル -t "[tag1][tag2]"
 
 * {sub_model_definitions}が書かれたノードの子ノードは、PICT入力ファイルのsub_model_definitions部分に転記されます。  
 * {constraint_definitions}が書かれたノードの子ノードは、PICT入力ファイルのconstraint_definitions部分に転記されます。
-* {pict_exec_option]が書かれたノードの子ノードは、PICT実行時オプションに展開されます。
+* {pict_exec_option}が書かれたノードの子ノードは、PICT実行時オプションに展開されます。
 
 以下のFreeMindファイルで実行した場合について説明します。
 
