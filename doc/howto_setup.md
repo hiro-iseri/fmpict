@@ -46,8 +46,8 @@ pip install ダウンロードした.whlファイル
 
 ## 3. 環境設定
 
-* pict.exeをfmpictから参照可能にします。
-    * Windowsなら、環境変数PATHに、PICTのインストールフォルダを追加します。
+* pict実行ファイルをfmpictから参照可能にします。
+    * Windowsなら、環境変数PATHに、pict.exeのインストールフォルダを追加します。
 
 ## 4. 動作確認
 

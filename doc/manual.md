@@ -6,7 +6,7 @@
 
 ## FMPict とは
 
-FMPictは、FreeMindを使ってPICTを操作するテストツールです。
+FMPictは、FreeMindからテストケースを生成するテスト設計自動化ツールです（PICTを制御して実現しています）。
 
 入力条件を描いたFreeMindファイルから、nワイズカバレッジ(n:1～3)を100%網羅するテストケースを生成します。
 
@@ -19,31 +19,28 @@ FMPictを利用するメリットは以下になります。
 
 ## 関連文書
 
-クイックスタートやハウツーは以下で記述しています。このドキュメントは主に記法定義を解説します。
+クイックスタートや詳細な手順は以下で記述しています。このドキュメントは主に記法定義を解説します。
 
-* [セットアップ](howto_setup.md)
+* [インストール手順](howto_setup.md)
 * [クイックスタート](howto_quick_start.md)
 * [様々な網羅基準でテストを生成](howto_select_coverage_criteria.md)
 * [テスト条件リスト（因子水準リスト）を取得](howto_get_factorlevel_list.md)
 
-## 実行環境
+## 実行環境とインストール手順
 
-実行には以下が必要です。
+インストール手順や必要環境は以下を参照ください。
+
+[セットアップ](howto_setup.md)
+
+概要として、実行には以下が必要です。
 
 * Python3 or Python2.7
 * PICT (https://github.com/Microsoft/pict/)
-    * PICTの実行ファイルを参照可能にしてください
-        * Windowsなら、PICT実行ファイル格納フォルダを、環境変数PATHに追加
 * 動作確認環境：Windows 10, Mac OS X
 
-「pip install fmpict」でインストールします。
 FMpictの実行は、以下のようにコマンド実行します。
 
 `fmpict FreeMindファイル`
-
-詳細な環境構築のやり方は以下を参照ください。
-
-[セットアップ](howto_setup.md)
 
 
 ## FreeMindの記法
@@ -110,7 +107,7 @@ FMpictの実行は、以下のようにコマンド実行します。
 
 以下の例ですと、「<量の条件」ノードは、すべて「>量の条件」の子ノードに置換されます。
 
-![basic_rule](image/.link_rule.png)
+![basic_rule](image/link_rule.png)
 
 上記の図でFMPictを実行した場合、以下のテキストデータが生成され、PICTに入力されます。
 
@@ -174,7 +171,7 @@ IF [文字コード] = "ASCII"   THEN [半角・全角] <= 全角なし;
 そして以下のPICT実行コマンドが実行されます({pict_exec_option}指定テキストを実行コマンド末尾に付記)。
 
 ```
-pict PICT入力データファイル /c
+pict PICT入力データファイル /s
 ```
 
 ## FMPictの実行オプション
