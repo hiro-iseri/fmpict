@@ -97,9 +97,9 @@ Y1      X2      Z1
 Y       X       Z
 Y2      X1A     Z2
 Y2      X2      Z1
-Y1      X1B     Z1
-Y2      X2      Z2
-Y1      X1A     Z2
+Y2      X1B     Z1
+Y1      X2      Z1
+Y1      X2      Z2
 ```
 
 ## 複数の網羅基準を組み合わせる
