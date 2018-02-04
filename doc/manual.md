@@ -25,6 +25,7 @@ FMPictを利用するメリットは以下になります。
 * [クイックスタート](howto_quick_start.md)
 * [様々な網羅基準でテストを生成](howto_select_coverage_criteria.md)
 * [テスト条件リスト（因子水準リスト）を取得](howto_get_factorlevel_list.md)
+* [クラシフィケーションツリー法を実践](howto_classification_tree_method.md)
 
 ## 実行環境とインストール手順
 
