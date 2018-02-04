@@ -376,6 +376,11 @@ def _get_parser():
     return parser
 
 def get_testconditions(freemind_file_path, tag_list=""):
+    """ generate testcondition list from specifiedd freemind file
+
+    :param freemind_file_path: filepath of input freemind.
+    :param tag_list: tag list for tag selection function. e.g.["[tag1]","[tag2]"]
+    """
     return FMCTMGenerator.get_testconditions_from_fmfile(freemind_file_path,
                                                          NodeMark.tag_text_to_list(tag_list))
 
