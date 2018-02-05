@@ -66,8 +66,8 @@ fmpict 対象マインドマップファイル
 * pipがインストールされていない場合があります。Python2.7〜3.3ではpipが同梱されていません。前述のリンク先の説明に従ってインストールしてください。
 * pipの実行ファイルが参照可能になっていない場合があります。Windowsの場合、pip実行ファイルの格納場所をWindows環境変数PATHに追加ください。
     * 手動インストールした際のpipの格納場所は、python.exeの格納フォルダか、その中の「Scripts」フォルダです。python.exeの格納場所は、Windowsではデフォルトで以下のいずれかが多いです。
-        * C:\Users\【ユーザ名】\AppData\Local\Programs\Python\Python**\Scripts
-        * C:\Python**\Scripts
+        * C:\Users\【ユーザ名】\AppData\Local\Programs\Python\Python**\
+        * C:\Python**\
 * pythonの実行ファイルが参照可能になっていない場合があります。Windowsの場合、前述のpython.exeの格納場所をWindows環境変数PATHに追加ください。
 
 ### fmpictが見つからないといったエラーが発生
