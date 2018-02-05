@@ -21,7 +21,7 @@ FMPictを利用するメリットは以下になります。
 
 クイックスタートや詳細な手順は以下で記述しています。このドキュメントは主に記法定義を解説します。
 
-* [インストール手順](howto_setup.md)
+* [インストール、アップデート、アンインストール手順](howto_setup.md)
 * [クイックスタート](howto_quick_start.md)
 * [様々な網羅基準でテストを生成](howto_select_coverage_criteria.md)
 * [テスト条件リスト（因子水準リスト）を取得](howto_get_factorlevel_list.md)
