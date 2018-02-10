@@ -11,6 +11,7 @@ build/
 develop-eggs/
 downloads/
 eggs/
+tox/
 .eggs/
 lib/
 lib64/

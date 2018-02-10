@@ -316,6 +316,7 @@ class FMCTMGenerator(object):
             PictRunner.delete_pict_file(file_path)
 
 class PictRunner(object):
+    """ control pict """
     DEFAULT_INPUT_FILE_PATH = "temp.txt"
 
     @staticmethod
@@ -384,7 +385,15 @@ def get_testconditions(freemind_file_path, tag_list=""):
     return FMCTMGenerator.get_testconditions_from_fmfile(freemind_file_path,
                                                          NodeMark.tag_text_to_list(tag_list))
 
-def run(freemind_file_path, genparamlist=False, savepictfile=False,pict_file_path="", tag_list=""):
+def run(freemind_file_path, genparamlist=False, savepictfile=False, pict_file_path="", tag_list=""):
+    """ generate testcase list from specifiedd freemind file
+
+    :param freemind_file_path: filepath of input freemind.
+    :param genparamlist: execute only generation of testcondition list if this flag is True
+    :param savepictfile: save testcondition list if this flag is True
+    :param pict_file_path: filepath of  testcondition list
+    :param tag_list: tag list for tag selection function. e.g.["[tag1]","[tag2]"]
+    """
     FMCTMGenerator.generate(freemind_file_path, genparamlist,
                             savepictfile, pict_file_path,
                             NodeMark.tag_text_to_list(tag_list))
