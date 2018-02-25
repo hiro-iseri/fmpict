@@ -63,7 +63,7 @@ class NodeMark(object):
     def get_node_type(cls, node):
         try:
             node_text = cls.trim_tag(NodeText.get_text(node))
-        except KeyError:
+        except (KeyError, TypeError):
             return NodeType.NO_DATA
 
         if not node_text:
