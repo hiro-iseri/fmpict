@@ -18,24 +18,22 @@ class UnitTestFMPict(unittest.TestCase):
         if os.path.exists(cls._work_dir_path):
             shutil.rmtree(cls._work_dir_path)
         os.mkdir(cls._work_dir_path)
-
     
-    def _testRunningPict(self):
-        expect = {u'A': [u'1', u'2', u'3'], u'B': [u'x', u'y', u'z']}
-        result = FMCTMGenerator._init_gendata()
-        result = FMCTMGenerator.get_testconditions_from_fmfile(self._test_dir_path + 'simple.mm')
-
+    def test_get_testconditions_link(self):
+        expect = {u'A': [u'2', u'3'], u'B': [u'x', u'y', u'z'], u'C': ['test', 'test2', 'test3']}
+        result = fmpict.get_testconditions(self._test_dir_path + 'simple_extend.mm')
+        self.assertTrue(result)
         for key, value in result.items():
             self.assertTrue(key in expect)
-            self.assertEqual(set(value), set(expect[key]))
-    
+            self.assertEqual(set(value), set(expect[key]))        
+
     def test_get_testconditions_simple(self):
         expect = {u'A': [u'1', u'2', u'3'], u'B': [u'x', u'y', u'z']}
         result = fmpict.get_testconditions(self._test_dir_path + 'simple.mm')
         self.assertTrue(result)
         for key, value in result.items():
             self.assertTrue(key in expect)
-            self.assertEqual(set(value), set(expect[key]))        
+            self.assertEqual(set(value), set(expect[key]))     
 
     def test_run_saveTestConditionFile(self):
         fmpict.run(self._test_dir_path + 'complex_input.mm', False, True, self._work_dir_path + 'savecon.txt', '')

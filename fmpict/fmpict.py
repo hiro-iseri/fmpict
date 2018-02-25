@@ -248,6 +248,8 @@ class FMCTMGenerator(object):
 
     @classmethod
     def get_testconditions_from_fmfile(cls, freemind_file_path, tag_list=None):
+        cls._init_gendata()
+        
         try:
             cls_tree = ET.parse(freemind_file_path)
         except ET.ParseError:
@@ -294,8 +296,6 @@ class FMCTMGenerator(object):
     @classmethod
     def generate(cls, input_file, only_gen_pictfile=False, save_pictfile=False, pictfile_path="", tag_list=None):
         """generates test condition from FreeMind file"""
-        cls._init_gendata()
-
         clsf_dict = cls.get_testconditions_from_fmfile(input_file, tag_list)
 
         if not clsf_dict:
