@@ -5,7 +5,8 @@ __pycache__/
 *.bak
 
 *.so
-
+temp.txt
+.pytest_cache
 .Python
 htmlcov/
 .coverage
@@ -14,6 +15,7 @@ build/
 develop-eggs/
 downloads/
 eggs/
+.tox/
 tox/
 .eggs/
 lib/

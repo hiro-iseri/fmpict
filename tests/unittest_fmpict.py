@@ -47,5 +47,18 @@ class UnitTestFMPict(unittest.TestCase):
         fmpict.run(self._test_dir_path + 'complex_input.mm', True, True, self._work_dir_path + 'notrunpict.txt', '')
         self.assertTrue(os.path.exists(self._work_dir_path + 'notrunpict.txt'))
 
+    def test_run_emptyfilename(self):
+        fmpict.run(self._test_dir_path + 'complex_input.mm', True, True)
+        self.assertTrue(os.path.exists('temp.txt'))
+
+    def test_main_withoutarg(self):
+        try:
+            fmpict.main()
+        except:
+            self.assertTrue(True)
+        else:
+            self.assertFalse(True)
+
+
 if __name__ == '__main__':
     unittest.main()
