@@ -12,6 +12,7 @@ dependencies:
   override:
     - pip install -U pip setuptools tox
     - tox --notes
+    - cp ./tests/fake/pict ./pict
 
   cache_directories:
     - "~/.cache/pip"
