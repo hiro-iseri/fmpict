@@ -3,7 +3,7 @@ machine:
     postgres: 127.0.0.1
 
   python:
-    version: 3.5.1
+    version: 3.6.2
 
   environment:
     TOXENV: circleci
