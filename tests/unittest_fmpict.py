@@ -36,16 +36,12 @@ class UnitTestFMPict(unittest.TestCase):
             self.assertEqual(set(value), set(expect[key]))     
 
     def test_run_saveTestConditionFile(self):
-        fmpict.run(self._test_dir_path + 'complex_input.mm', False, True, self._work_dir_path + 'savecon.txt', '')
+        fmpict.run(self._test_dir_path + 'complex_input.mm', True, True, self._work_dir_path + 'savecon.txt', '')
         self.assertTrue(os.path.exists(self._work_dir_path + 'savecon.txt'))
 
     def test_run_notSaveTestConditionFile(self):
-        fmpict.run(self._test_dir_path + 'complex_input.mm', False, False, self._work_dir_path + 'notsavecon.txt', '[dummy]')
+        fmpict.run(self._test_dir_path + 'complex_input.mm', True, False, self._work_dir_path + 'notsavecon.txt', '[dummy]')
         self.assertFalse(os.path.exists(self._work_dir_path + 'notsavecon.txt'))
-
-    def test_run_notRunPict(self):
-        fmpict.run(self._test_dir_path + 'complex_input.mm', True, True, self._work_dir_path + 'notrunpict.txt', '')
-        self.assertTrue(os.path.exists(self._work_dir_path + 'notrunpict.txt'))
 
     def test_run_emptyfilename(self):
         fmpict.run(self._test_dir_path + 'complex_input.mm', True, True)
