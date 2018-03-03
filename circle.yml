@@ -8,7 +8,8 @@ machine:
 dependencies:
   override:
     - pip install -U pip
-    - pip install tox
+    - pip install tox tox-pyenv
+    - pyenv local 3.6.2 2.7.12
 
   cache_directories:
     - "~/.cache/pip"
