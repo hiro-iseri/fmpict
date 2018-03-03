@@ -1,7 +1,4 @@
 machine:
-  hosts:
-    postgres: 127.0.0.1
-
   python:
     version: 3.6.2
 
@@ -10,8 +7,8 @@ machine:
 
 dependencies:
   override:
-    - pip install -U pip setuptools tox
-    - tox --notes
+    - pip install -U pip
+    - pip install tox
 
   cache_directories:
     - "~/.cache/pip"
