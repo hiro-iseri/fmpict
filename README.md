@@ -13,3 +13,8 @@ FreeMindで描いたモデルからテストケースを自動生成するテス
 
 [doc/manual.md](https://github.com/hiro-iseri/fmpict/blob/master/doc/manual.md)
 
+## フィードバック先
+
+Mail: iseri.hiroki[＠]gmail.com
+Author: Hiroki Iseri
+
