@@ -221,7 +221,6 @@ FMPictはMITライセンスに基づいています。用途に制限はあり�
 
 ## フィードバック先
 
-改善や不具合報告などのフィードバックがありましたら、以下までお知らせください。
-
 Github: https://github.com/hiro-iseri/fmpict  
-Mail: iseri.hiroki[a]gmail.com
+Mail: iseri.hiroki[＠]gmail.com
+Author: Hiroki Iseri
