@@ -34,9 +34,15 @@ pip uninstall fmpict
 
 Windows 10, MaxOS X
 
-## Run Command
+## Run fmpict
+
+if you run the following command, fmpict generates a testcase by freemind file and output it to standard output.
 
 `fmpict [filepath of FreeMind file]`
+
+if you run the following comannd, fmpict generates testcase file.
+
+`fmpict [filepath of FreeMind file] -s -g`
 
 ## Style of FreeMind
 
@@ -49,26 +55,29 @@ Windows 10, MaxOS X
     * Value in Test Condition Node. This node corresponds to class in the classification tree method.
     * a child of the test condition node, and the inner node in the test condition node is the value node
 
-以下の例ですと、「文字コード」「半角・全角」「文字長」がテスト条件としてピックアップされます。
+Example:
 
-![basic_rule](image/basic_rule.png)
+![basic_rule](image/en/test_input.png)
 
-上記の図でFMPictを実行した場合、以下のテキストデータが生成され、PICTに入力されます。
+when fmpict retrieves the above figure, fmpit generates the following text file and input it to PICT.
 
 ```
-文字長:上限以上,範囲内,空文字
-半角・全角:全角あり,全角なし
-文字コード:UTF-8,SHIFT-JIS,Latin-1
+classification1:class1, class2, class3
+classification2:class4, class5
 ```
 
 ### Comment and invalid node
 
 * Nodes starting with "#" are comment nodes. Comment nodes and their descendants are ignored.
 
+
 以下の例ですと「#メモ」とその子孫ノードは無視されます。
 
-![basic_rule](image/basic_rule.png)
+Example:
 
+![basic_rule](image/en/comment.png)
+
+when fmpict retrieves the above figure, fmpit ignores "#memo" and "sample for sample"
 
 ### 階層分けされたテスト条件ノード、値ノードの書き方
 
