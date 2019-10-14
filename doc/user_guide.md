@@ -70,88 +70,82 @@ classification2:class4, class5
 
 * Nodes starting with "#" are comment nodes. Comment nodes and their descendants are ignored.
 
-
-以下の例ですと「#メモ」とその子孫ノードは無視されます。
-
 Example:
 
 ![basic_rule](image/en/comment.png)
 
 when fmpict retrieves the above figure, fmpit ignores "#memo" and "sample for sample"
 
-### 階層分けされたテスト条件ノード、値ノードの書き方
+### Hierarchy of test conditions and values
+
+Test conditions and values ​​can have a hierarchical structure.
 
 テスト条件ノード、値ノードは階層化が可能です。
 
-* 値ノードが階層化されている場合、末端のノードが処理に用いられます。
-* テスト条件ノードが階層化されている場合、子孫にテスト条件ノードを持たないノードが処理に用いられます。
+* If the value is hierarchical, only the end value is used
+* If test conditions are hierarchical, test conditions with only value nodes as descendants are used.
 
-【値ノードの階層化の例】以下を入力すると「子ノード1」が無視されます。末端の「孫ノード1」「孫ノード2」「子ノード2」が処理に用いられます。
+Example:
 
-![layered](image/layered.png)
+![layered](image/en/test_struct.png)
 
-【テスト条件ノードの階層化の例】以下を入力すると、「テスト条件」が無視されます。子孫のテスト条件ノードを持たない「テスト条件1」「テスト条件A」が処理に用いられます。
+上記のFreemindが入力された場合、fmpictはTC2、TC3、value1、value3、value4を使用します。
+fmpictはTC1、value2は無視します。
 
-![layered_input](image/layered_input.png)
+### Eliminate duplication with link
 
+Link notation is used to describe overlapping test conditions together.
 
-### リンク記法
+* Nodes starting with ">" are common definition nodes.
+* Nodes starting with "<" are references to common definition nodes.
+* If the node texts after ">" and "<" match, "reference to common definition node" will be collectively replaced with the child node of "common definition node".
 
-リンク記法は、重複するテスト条件を、一つにまとめて記述するために使用します。
+In the following example, all "<Size" nodes will be replaced by child nodes of ">Size".
 
-* 「>」から始まるノードは、共通定義ノードです。  
-* 「<」から始まるノードは、共通定義ノードへの参照です。  
-* 「>」「<」以降のノードテキストが一致した場合、「共通定義ノードへの参照」は、「共通定義ノード」の子ノードに一括置換されます。
+![basic_rule](image/en/link.png)
 
-以下の例ですと、「<量の条件」ノードは、すべて「>量の条件」の子ノードに置換されます。
-
-![basic_rule](image/link_rule.png)
-
-上記の図でFMPictを実行した場合、以下のテキストデータが生成され、PICTに入力されます。
+When FMPict is executed in the above figure, the following text data is generated and input to PICT.
 
 ```
-麺の量:大,普通,小
-具の量:大,普通,小,なし
+Food Size:Large,Small
+Drink Size:Large,Small,Medium
 ```
 
-### タグ記法
+### Select a node by tag
 
-タグ記法は、解析するノードを絞り込むために使用します。
+Tag notation is used to narrow down the nodes to be analyzed.
 
-* 「[」「]」でかこった文字列がタグです。タグはノード文字列先頭に記述します。タグは半角英数字、アンダーバーのみ記述してください
-    * タグは全てのノード（テスト条件ノード、値ノード、リンク、オプション含む）に付与できます。タグは常に先頭に記述ください。例えばテスト条件ノードにタグを付与する場合「[タグ]@テスト条件名」と記述ください。
-    * タグは出力から削除されます。
-    * 「[タグ1][タグ2]」のように複数のタグを列記できます。
-* 後述するオプション引数で、タグ記法を有効化します。
-    * オプション引数でタグオプション(-t)が指定された場合、引数で指定されたタグを持つノードを処理します。引数で指定されなかったタグを持つノードは、無視されます。
+* A character string surrounded by “[” and “]” is a tag. Write the tag at the beginning of the node string. Please write only half-width alphanumeric characters and underscores
+    * Tags can be attached to all nodes (including test condition nodes, value nodes, links, and options). Always write the tag first. For example, when adding a tag to a test condition node, describe as [[tag] @test condition name].
+    * The tag is removed from the output.
+    * Multiple tags can be listed like "[Tag 1] [Tag 2]".
+* Enable tag notation with optional arguments described below.
+    * If the tag option (-t) is specified in the option argument, the node with the tag specified in the argument is processed. Nodes with tags not specified in the argument are ignored.
 
-以下のFreeMindファイルを処理した場合について説明します。
+This section describes the case where the following FreeMind files are processed.
 
 ![tag](image/tag.png)
 
-【タグ記法を有効化しない場合】この例を以下のコマンドで実行した場合、「テスト入力1」「値1」「値2」がPICTに入力されます。
+
+[When tag notation is not enabled] When this example is executed with the following command, “test input 1”, “value 1”, and “value 2” are input to PICT.
 
 ```
-fmpict 例ファイル
+fmpict targetfile
 ```
 
-【tag1のみ選択する場合】以下のコマンドで実行した場合、「テスト入力1」「値1」がPICTに入力されます。「値2」は無視されます。
+[When only tag1 is selected] When executed with the following command, "test input 1" and "value 1" are input to PICT. "Value 2" is ignored.
 
 ```
-fmpict 例ファイル -t "[tag1]"
+fmpict targetfile -t "[tag1]"
 ```
 
-【tag2、tag1を選択する場合】以下のコマンドで実行した場合、「テスト入力1」「値1」「値2」がPICTに入力されます。
 
-```
-fmpict 例ファイル -t "[tag1][tag2]"
-```
 
-### オプション記法
+### Option Node
 
-* {sub_model_definitions}が書かれたノードの子ノードは、PICT入力ファイルのsub_model_definitions部分に転記されます。  
-* {constraint_definitions}が書かれたノードの子ノードは、PICT入力ファイルのconstraint_definitions部分に転記されます。
-* {pict_exec_option}が書かれたノードの子ノードは、PICT実行時オプションに展開されます。
+* Child nodes of nodes with {sub_model_definitions} written are transferred to the sub_model_definitions part of the PICT input file.
+* Child nodes of nodes with {constraint_definitions} are transferred to the constraint_definitions part of the PICT input file.
+* Child nodes of nodes with {pict_exec_option} are expanded to PICT runtime options.
 
 以下のFreeMindファイルで実行した場合について説明します。
 
@@ -212,11 +206,7 @@ optional arguments:
                         select specified tag in generating
 ```
 
-## ライセンスや制限事項
-
-FMPictはMITライセンスに基づいています。用途に制限はありません。
-
-## フィードバック先
+## Contact
 
 Github: https://github.com/hiro-iseri/fmpict  
 Mail: iseri.hiroki[＠]gmail.com  
