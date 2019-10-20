@@ -2,19 +2,15 @@
 
 ## Overview
 
-FMPict help test design by classification tree method.
-FMPict retrieves a freemind file descripted classification tree, and generates test case covering n-wise coverage(n:1-3).
-
-The advantages of PMPict:
-
-* FMPict can express a combination test in freeminde. So FMPict can clearly express equivalence partitions and abstract structure of test conditions.
-* FMPict can erase repeated descriptions of test conditions.
+FMPict helps test design by classification tree method.
+FMPict generates test case covering n-wise coverage(n:1-3) from a freemind file descripted classification tree.
 
 ## Install
 
 the following tools should be installed:
 
 * PICT
+    * FMPict must be able to run PICT Application. For Windows, the folder path containing pict.exe must be added to the system environment variable "PATH".
 * FreeMind
 * Python
 
@@ -30,30 +26,32 @@ pip install fmpict
 pip uninstall fmpict
 ```
 
-### Execution check environment
+### Checked Execution environment
 
 Windows 10, MaxOS X
 
 ## Run fmpict
 
-if you run the following command, fmpict generates a testcase by freemind file and output it to standard output.
+When the following command is executed, FMPict generates a testcase by FreeMind file and output it to standard output.
 
 `fmpict [filepath of FreeMind file]`
 
-if you run the following comannd, fmpict generates testcase file.
+When the following command is executed, fmpict generates test condition file.
 
-`fmpict [filepath of FreeMind file] -s -g`
+`fmpict [filepath of FreeMind file] -s -g -p testcondition.txt`
 
 ## Style of FreeMind
 
 ### Basic Node Type
 
+fmpict describes test conditions with two basic nodes.
+
 * Test Condition Node
     * Test Input. This node corresponds to classification in the classification tree method.
-    * Node with folder icon, or Nodes that start with the @ character are test condition node.
+    * Node with folder icon, or Nodes that start with the '@' character are test condition node.
 * Value Node
     * Value in Test Condition Node. This node corresponds to class in the classification tree method.
-    * a child of the test condition node, and the inner node in the test condition node is the value node
+    * A child of the test condition node is the value node
 
 Example:
 
@@ -68,7 +66,8 @@ classification2:class4, class5
 
 ### Comment and invalid node
 
-* Nodes starting with "#" are comment nodes. Comment nodes and their descendants are ignored.
+The Nodes starting with "#" are comment nodes.
+Comment nodes and their descendants are ignored.
 
 Example:
 
@@ -80,17 +79,15 @@ when fmpict retrieves the above figure, fmpit ignores "#memo" and "sample for sa
 
 Test conditions and values ​​can have a hierarchical structure.
 
-テスト条件ノード、値ノードは階層化が可能です。
-
-* If the value is hierarchical, only the end value is used
-* If test conditions are hierarchical, test conditions with only value nodes as descendants are used.
+* If the value is hierarchical, fmpict only use the end value node.
+* If test conditions are hierarchical, fmpict only use test conditions with only value nodes as descendants.
 
 Example:
 
 ![layered](image/en/test_struct.png)
 
-上記のFreemindが入力された場合、fmpictはTC2、TC3、value1、value3、value4を使用します。
-fmpictはTC1、value2は無視します。
+
+If FMPict retrieves the above Freemind file, fmpict uses TC2, TC3, value1, value3, value4, and fmpict ignores TC1 and value2.
 
 ### Eliminate duplication with link
 
@@ -124,22 +121,16 @@ Tag notation is used to narrow down the nodes to be analyzed.
 
 This section describes the case where the following FreeMind files are processed.
 
-![tag](image/tag.png)
+![tag](image/en/tag.png)
 
 
-[When tag notation is not enabled] When this example is executed with the following command, “test input 1”, “value 1”, and “value 2” are input to PICT.
+[When tag notation is not enabled] When this example is executed with the following command, “Small”, “Large” are input to PICT.
 
 ```
 fmpict targetfile
 ```
 
-[When only tag1 is selected] When executed with the following command, "test input 1" and "value 1" are input to PICT. "Value 2" is ignored.
-
-```
-fmpict targetfile -t "[tag1]"
-```
-
-
+[When only tag1 is selected] When executed with the following command, "Small" is input to PICT. "Large" is ignored.
 
 ### Option Node
 
@@ -147,63 +138,73 @@ fmpict targetfile -t "[tag1]"
 * Child nodes of nodes with {constraint_definitions} are transferred to the constraint_definitions part of the PICT input file.
 * Child nodes of nodes with {pict_exec_option} are expanded to PICT runtime options.
 
-以下のFreeMindファイルで実行した場合について説明します。
+Example:
 
-![basic_rule](image/option_rule.png)
+![basic_rule](image/en/option.png)
 
-上記の図でFMPictを実行した場合、以下のPICT入力データが生成されます（{constraint_definitions}の内容が末尾に追記される）。
-
-```
-文字コード:UTF-8,SHIFT-JIS,ASCII
-半角・全角:全角あり,全角なし
-文字長:上限以上,範囲内,空文字
-IF [文字コード] = "ASCII"   THEN [半角・全角] <= 全角なし;
-```
-
-そして以下のPICT実行コマンドが実行されます({pict_exec_option}指定テキストを実行コマンド末尾に付記)。
+When fmpict receives the above figure, the following PICT execution command is executed ({pict_exec_option} specification text is added at the end of the execution command).
 
 ```
-pict PICT入力データファイル /s
+pict [freemind file] /s
 ```
 
-## FMPictの実行オプション
+## Selecting test coverage criteria
 
-fmpictは実行オプションを持ちます。
+fmpict sets test coverage by specifying options to {pict_exec_option}
 
-### オプション引数
+### Select 2-wise coverage 100%
+
+If you do not set any options, fmpict creates a test case with 2wise coverage 100%
+
+Input File:
+
+![c2](image/en/nwise_example.png)
+
+Output:
+
+```
+Y       X       Z
+Y2      X2      Z2
+Y2      X1      Z1
+Y1      X1      Z2
+Y1      X2      Z1
+```
+
+### Select 1-wise coverage 100%
+
+When creating a test case with 1wise coverage 100%, enter the PICT command “/o:1” in the child node of {pict_exec_option}.
+
+Input File:
+
+![c2](image/en/1wise.png)
+
+Output:
+
+```
+Y       X       Z
+Y2      X2      Z2
+Y1      X1      Z1
+```
+
+If you want to set 3wise coverage 100%, specify / o: 3 as well
+
+## Detailed Option
 
 * -h
-    * ヘルプを表示します。
+    * Display help.
 * -p FILE_PATH
-    * 指定されたFILE_PATHにPICT入力ファイルを保存します（このオプションがない場合、FILE_PATHはtemp.txtになります）。
+    * Save the PICT input file to the specified FILE_PATH (if this option is not present, FILE_PATH will be temp.txt).
 * -g
-    * PICT実行をスキップします。PICT入力ファイル生成のみ行います。
+    * Skip PICT execution. Only PICT input file generation is performed.
 * -s
-    * 中間生成するPICT入力ファイルを削除せず保持します（このオプションがない場合、PICT入力ファイルは自動削除されます）。
+    * Keep the PICT input file that is generated intermediately without deleting it (the PICT input file is automatically deleted if this option is not present).
 * -t
-    * タグ絞り込みを行います。"[tag名]"を列記した文字列を指定します。指定された文字列以外のタグノードは解析から除外されます。
+    * Filters tags. Specify a character string that lists "[tag name]". Tag nodes other than the specified string are excluded from the analysis.
 
-実行例：sample.mmを入力に、pict_list.txtにPICT入力ファイルを保存
+Execution example: input sample.mm and save PICT input file to pict_list.txt
 
 ```
 fmpict sample.mm -s -g -p pict_list.txt
-```
-
-### ヘルプ一覧
-```
-This tool generates test cases using freemind and pict
-
-positional arguments:
-  freemind_file_path    *.mm input file
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -p PICT_FILE_PATH, --pict_file_path PICT_FILE_PATH
-                        save pict file to specified path
-  -g, --genparamlist    execute until pict file generation
-  -s, --savepictfile    save pict file
-  -t SELECT_TAG_LIST, --select_tag_list SELECT_TAG_LIST
-                        select specified tag in generating
 ```
 
 ## Contact
