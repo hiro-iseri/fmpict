@@ -2,17 +2,19 @@
 
 ## Overview
 
-FMPict helps test design by classification tree method.
+FMPict helps test design using classification tree method.
 FMPict generates test case covering n-wise coverage(n:1-3) from a freemind file descripted classification tree.
 
 ## Install
 
-the following tools should be installed:
+The following tools must be installed:
 
 * PICT
-    * FMPict must be able to run PICT Application. For Windows, the folder path containing pict.exe must be added to the system environment variable "PATH".
+    * FMPict must be able to run PICT Application. For Windows, the folder path including pict.exe must be added to the system environment variable "PATH".
 * FreeMind
 * Python
+
+FMPict is the command line interface tool. Install and Uninstall of fmpict uses command line interface.
 
 ### Install Command
 
@@ -26,9 +28,9 @@ pip install fmpict
 pip uninstall fmpict
 ```
 
-### Checked Execution environment
+### Execution environment
 
-Windows 10, MaxOS X
+Windows, MaxOS X
 
 ## Run fmpict
 
@@ -36,7 +38,7 @@ When the following command is executed, FMPict generates a testcase by FreeMind 
 
 `fmpict [filepath of FreeMind file]`
 
-When the following command is executed, fmpict generates test condition file.
+When the following command is executed, fmpict generates test condition and saves as "testcondition.txt".
 
 `fmpict [filepath of FreeMind file] -s -g -p testcondition.txt`
 
@@ -44,20 +46,20 @@ When the following command is executed, fmpict generates test condition file.
 
 ### Basic Node Type
 
-fmpict describes test conditions with two basic nodes.
+fmpict uses two basic nodes to describe test conditions.
 
 * Test Condition Node
     * Test Input. This node corresponds to classification in the classification tree method.
     * Node with folder icon, or Nodes that start with the '@' character are test condition node.
 * Value Node
     * Value in Test Condition Node. This node corresponds to class in the classification tree method.
-    * A child of the test condition node is the value node
-
+    * A child of the test condition node that don't have a suffix or folder icon is the value node
+ 
 Example:
 
 ![basic_rule](image/en/test_input.png)
 
-when fmpict retrieves the above figure, fmpit generates the following text file and input it to PICT.
+When fmpict retrieves the above figure, fmpict generates the following text file and input it to PICT.
 
 ```
 classification1:class1, class2, class3
@@ -73,23 +75,25 @@ Example:
 
 ![basic_rule](image/en/comment.png)
 
-when fmpict retrieves the above figure, fmpit ignores "#memo" and "sample for sample"
+When fmpict retrieves the above figure, fmpit ignores "#memo" and "sample for sample"
 
 ### Hierarchy of test conditions and values
 
 Test conditions and values ​​can have a hierarchical structure.
 
-* If the value is hierarchical, fmpict only use the end value node.
-* If test conditions are hierarchical, fmpict only use test conditions with only value nodes as descendants.
+* If the value node is hierarchical, fmpict only use leaf node.
+* If test condition node is hierarchical, fmpict only use test conditions that have only value node.
 
 Example:
 
 ![layered](image/en/test_struct.png)
 
 
-If FMPict retrieves the above Freemind file, fmpict uses TC2, TC3, value1, value3, value4, and fmpict ignores TC1 and value2.
+If FMPict retrieves the above Freemind file, fmpict uses TC2, TC3, value1, value3, value4. And fmpict ignores TC1 and value2.
 
-### Eliminate duplication with link
+★
+
+### Eliminate duplication using link
 
 Link notation is used to describe overlapping test conditions together.
 
@@ -108,7 +112,7 @@ Food Size:Large,Small
 Drink Size:Large,Small,Medium
 ```
 
-### Select a node by tag
+### Select node using tag
 
 Tag notation is used to narrow down the nodes to be analyzed.
 
@@ -127,7 +131,7 @@ This section describes the case where the following FreeMind files are processed
 [When tag notation is not enabled] When this example is executed with the following command, “Small”, “Large” are input to PICT.
 
 ```
-fmpict targetfile
+fmpict [targetfile]
 ```
 
 [When only tag1 is selected] When executed with the following command, "Small" is input to PICT. "Large" is ignored.
