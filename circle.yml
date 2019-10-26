@@ -1,0 +1,34 @@
+version:2
+machine:
+  post:
+    - pyenv global 3.6.2 2.7.12
+
+  environment:
+    TOXENV: circleci
+
+jobs:
+  py2:
+    docker:
+      - image: circleci/python:2
+    step:
+      - checkout
+      - run: pip install -U pip
+      - run: pip install tox
+      - run: tox
+      - run: mkdir -p $CIRCLE_TEST_REPORTS/pytest
+      - run: mv .junit.xml $CIRCLE_TEST_REPORTS/pytest/junit.xml
+  py3:
+    docker:
+      - image: circleci/python:3
+    step:
+      - checkout
+      - run: pip install -U pip
+      - run: pip install tox
+      - run: tox
+      - run: mkdir -p $CIRCLE_TEST_REPORTS/pytest
+      - run: mv .junit.xml $CIRCLE_TEST_REPORTS/pytest/junit.xml
+workflows:
+  test:
+    jobs:
+      - py2
+      - py3

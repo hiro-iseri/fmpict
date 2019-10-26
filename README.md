@@ -1,14 +1,24 @@
 # FMPict
 
-## FMPictとは
+## Overview
 
-FreeMindで、テストツールPICTを操作するツールです。
+FMPict helps test design using classification tree method.
 
-## 使い方
+FMPict generates test case covering n-wise coverage(n:1-3) from a freemind file descripted classification tree.
 
-実行例「python fmctm.py FreeMindファイル」  
+## User Guide
 
-詳細な使い方、動作環境は「doc/manual.md」を参照ください。
+install: "pip install fmpict"
 
-[doc/manual.md](https://github.com/hiro-iseri/fmpict/blob/master/doc/manual.md)
+run : "fmpict [filepath of freemind]
+
+
+[User Guide](https://github.com/hiro-iseri/fmpict/blob/master/doc/user_guide.md)
+
+[日本語マニュアル](https://github.com/hiro-iseri/fmpict/blob/master/doc/manual.md)
+
+## contact 
+
+Mail: iseri.hiroki[＠]gmail.com  
+Author: Hiroki Iseri
 

@@ -1,6 +1,7 @@
 <map version="1.1.0">
 <!-- To view this file, download free mind mapping software FreeMind from http://freemind.sourceforge.net -->
-<node CREATED="1514879415213" ID="ID_1576690442" MODIFIED="1514998893629" TEXT="&#x30c6;&#x30ad;&#x30b9;&#x30c8;&#x5165;&#x529b;&#x6b04;">
+<node CREATED="1514879415213" ID="ID_1576690442" MODIFIED="1517674882698" TEXT="&#x30c6;&#x30ad;&#x30b9;&#x30c8;&#x5165;&#x529b;&#x6b04;">
+<font NAME="SansSerif" SIZE="12"/>
 <node CREATED="1514999025462" ID="ID_522702488" MODIFIED="1514999026682" POSITION="right" TEXT="&#x6587;&#x5b57;">
 <node CREATED="1514998912969" ID="ID_211607583" MODIFIED="1514999016316" TEXT="&#x6587;&#x5b57;&#x30b3;&#x30fc;&#x30c9;">
 <icon BUILTIN="folder"/>
