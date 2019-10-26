@@ -32,13 +32,13 @@ pip uninstall fmpict
 
 Windows, MaxOS X
 
-## Run fmpict
+## Run FMPict
 
 When the following command is executed, FMPict generates a testcase by FreeMind file and output it to standard output.
 
 `fmpict [filepath of FreeMind file]`
 
-When the following command is executed, fmpict generates test condition and saves as "testcondition.txt".
+When the following command is executed, FMPict generates test condition and saves as "testcondition.txt".
 
 `fmpict [filepath of FreeMind file] -s -g -p testcondition.txt`
 
@@ -46,7 +46,7 @@ When the following command is executed, fmpict generates test condition and save
 
 ### Basic Node Type
 
-fmpict uses two basic nodes to describe test conditions.
+FMPict uses two basic nodes to describe test conditions.
 
 * Test Condition Node
     * Test Input. This node corresponds to classification in the classification tree method.
@@ -59,7 +59,7 @@ Example:
 
 ![basic_rule](image/en/test_input.png)
 
-When fmpict retrieves the above figure, fmpict generates the following text file and input it to PICT.
+When FMPict retrieves the above figure, FMPict generates the following text file and input it to PICT.
 
 ```
 classification1:class1, class2, class3
@@ -75,21 +75,21 @@ Example:
 
 ![basic_rule](image/en/comment.png)
 
-When fmpict retrieves the above figure, fmpit ignores "#memo" and "sample for sample"
+When FMPict retrieves the above figure, fmpit ignores "#memo" and "sample for sample"
 
 ### Hierarchy of test conditions and values
 
 Test conditions and values ​​can have a hierarchical structure.
 
-* If the value node is hierarchical, fmpict only use leaf node.
-* If test condition node is hierarchical, fmpict only use test conditions node that all descendants are value node.
+* If the value node is hierarchical, FMPict only use leaf node.
+* If test condition node is hierarchical, FMPict only use test conditions node that all descendants are value node.
 
 Example:
 
 ![layered](image/en/test_struct.png)
 
 
-If FMPict retrieves the above Freemind file, fmpict uses TC2, TC3, value1, value3, value4. And fmpict ignores TC1 and value2.
+If FMPict retrieves the above Freemind file, FMPict uses TC2, TC3, value1, value3, value4. And FMPict ignores TC1 and value2.
 
 
 ### Link Prefix
@@ -104,7 +104,7 @@ In the following example, all "<Size" nodes will be replaced by child nodes of "
 
 ![basic_rule](image/en/link.png)
 
-When FMPict is executed in the above figure, fmpict generates the following text data and input it to PICT.
+When FMPict is executed in the above figure, FMPict generates the following text data and input it to PICT.
 
 ```
 Food Size:Large,Small
@@ -146,7 +146,7 @@ Example:
 
 ![basic_rule](image/en/option.png)
 
-When fmpict retrieves the above figure, fmpict executes pict with following command.
+When FMPict retrieves the above figure, FMPict executes pict with following command.
 
 ```
 pict [freemind file] /s
@@ -154,11 +154,11 @@ pict [freemind file] /s
 
 ## Selecting Test Coverage Criteria
 
-fmpict select test coverage by specifying options to {pict_exec_option}
+FMPict select test coverage by specifying options to {pict_exec_option}
 
 ### Select 2-wise coverage 100%
 
-If no options are specified, fmpict generates a test case covering 2wise coverage 100%.
+If no options are specified, FMPict generates a test case covering 2wise coverage 100%.
 
 Input File:
 
@@ -176,7 +176,7 @@ Y1      X2      Z1
 
 ### Select 1-wise coverage 100%
 
-if “/o:1” option is specified in the child node of {pict_exec_option}, fmpict generates a test case covering 1wise coverage 100%.
+if “/o:1” option is specified in the child node of {pict_exec_option}, FMPict generates a test case covering 1wise coverage 100%.
 
 Input File:
 
@@ -190,7 +190,7 @@ Y2      X2      Z2
 Y1      X1      Z1
 ```
 
-if “/o:3” option is specified in the child node of {pict_exec_option}, fmpict generates a test case covering 3wise coverage 100%.
+if “/o:3” option is specified in the child node of {pict_exec_option}, FMPict generates a test case covering 3wise coverage 100%.
 
 ## Detailed Option
 
