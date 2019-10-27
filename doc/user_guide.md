@@ -75,7 +75,7 @@ Example:
 
 ![basic_rule](image/en/comment.png)
 
-When FMPict retrieves the above figure, fmpit ignores "#memo" and "sample for sample"
+When FMPict retrieves the above figure, FMPict ignores "#memo" and "sample for sample"
 
 ### Hierarchy of test conditions and values
 
