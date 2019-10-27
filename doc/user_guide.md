@@ -94,7 +94,7 @@ If FMPict retrieves the above Freemind file, FMPict uses TC2, TC3, value1, value
 
 ### Link Prefix
 
-Link notation is used to　eliminate duplication of nodes.
+Link notation is used to eliminate duplication of nodes.
 
 * Nodes starting with ">" are common definition nodes.
 * Nodes starting with "<" are references to common definition nodes.
@@ -214,5 +214,5 @@ fmpict sample.mm -s -g -p pict_list.txt
 ## Contact
 
 Github: https://github.com/hiro-iseri/fmpict  
-Mail: iseri.hiroki[＠]gmail.com
-Author: Hiroki Iseri
+Mail: iseri.hiroki[＠]gmail.com  
+Author: Hiroki Iseri  
