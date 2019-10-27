@@ -13,7 +13,7 @@ install: "pip install fmpict"
 run : "fmpict [filepath of freemind]
 
 
-[User Guide](https://github.com/hiro-iseri/fmpict/blob/master/doc/user_guide.md)
+[User’s Guide](https://github.com/hiro-iseri/fmpict/blob/master/doc/user_guide.md)
 
 [日本語マニュアル](https://github.com/hiro-iseri/fmpict/blob/master/doc/manual.md)
 
