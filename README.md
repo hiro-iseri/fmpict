@@ -8,11 +8,6 @@ FMPict generates test case covering n-wise coverage(n:1-3) from a freemind file 
 
 ## User Guide
 
-install: "pip install fmpict"
-
-run : "fmpict [filepath of freemind]
-
-
 [User’s Guide](https://github.com/hiro-iseri/fmpict/blob/master/doc/user_guide.md)
 
 [日本語マニュアル](https://github.com/hiro-iseri/fmpict/blob/master/doc/manual.md)
