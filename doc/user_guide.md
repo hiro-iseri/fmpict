@@ -52,7 +52,7 @@ FMPict uses two basic nodes to describe test conditions.
     * Test Input. This node corresponds to classification in the classification tree method.
     * Node with folder icon, or Nodes that start with the '@' character are test condition node.
 * Value Node
-    * Value  Test Condition Node. This node corresponds to class in the classification tree method.
+    * Value of Test Condition Node. This node corresponds to class in the classification tree method.
     * A child of the test condition node that don't have a suffix or folder icon is the value node
  
 Example:
