@@ -34,7 +34,7 @@ Windows, MaxOS X
 
 ## Run FMPict
 
-When the following command is executed, FMPict generates a testcase by FreeMind file and output it to standard output.
+When the following command is executed, FMPict generates testcases by FreeMind file and output it to standard output.
 
 `fmpict [filepath of FreeMind file]`
 
@@ -50,16 +50,16 @@ FMPict uses two basic nodes to describe test conditions.
 
 * Test Condition Node
     * Test Input. This node corresponds to classification in the classification tree method.
-    * Node with folder icon, or Nodes that start with the '@' character are test condition node.
+    * Node with folder icon, or nodes that start with the '@' character are test condition node.
 * Value Node
     * Value of Test Condition Node. This node corresponds to class in the classification tree method.
-    * A child of the test condition node that don't have a suffix or folder icon is the value node
+    * A child of the test condition node that don't have a suffix or folder icon is the value node.
  
 Example:
 
 ![basic_rule](image/en/test_input.png)
 
-When FMPict retrieves the above figure, FMPict generates the following text file and input it to PICT.
+When FMPict retrieves the above figure, FMPict generates the following text file and inputs it to PICT.
 
 ```
 classification1:class1, class2, class3
@@ -81,15 +81,15 @@ When FMPict retrieves the above figure, FMPict ignores "#memo" and "sample for s
 
 Test conditions and values ​​can have a hierarchical structure.
 
-* If the value node is hierarchical, FMPict only use leaf node.
-* If test condition node is hierarchical, FMPict only use test conditions node that all descendants are value node.
+* If a value node is hierarchical, FMPict only use its leaf nodes.
+* If a test condition node is hierarchical, FMPict only use the test condition node that all descendants are value node.
 
 Example:
 
 ![layered](image/en/test_struct.png)
 
 
-If FMPict retrieves the above Freemind file, FMPict uses TC2, TC3, value1, value3, value4. And FMPict ignores TC1 and value2.
+If FMPict retrieves the above Freemind file, FMPict uses TC2, TC3, value1, value3, value4 and value5. And FMPict ignores TC1 and value2.
 
 
 ### Link Prefix
@@ -98,13 +98,13 @@ Link notation is used to eliminate duplication of nodes.
 
 * Nodes starting with ">" are common definition nodes.
 * Nodes starting with "<" are references to common definition nodes.
-* If the node texts after ">" or "<" match, the reference to common definition nodes are replaced with the child node of common definition node.
+* If the node texts after ">" or "<" match, the reference to common definition nodes are replaced with the child nodes of common definition nodes.
 
 In the following example, all "<Size" nodes will be replaced by child nodes of ">Size".
 
 ![basic_rule](image/en/link.png)
 
-When FMPict is executed in the above figure, FMPict generates the following text data and input it to PICT.
+When FMPict is executed in the above figure, FMPict generates the following text data and inputs it to PICT.
 
 ```
 Food Size:Large,Small
@@ -113,7 +113,7 @@ Drink Size:Large,Small,Medium
 
 ### Tag Selection
 
-The Tag notation is used to select node.
+The Tag notation is used to select nodes.
 
 * A keyword surrounded by “[” and “]” is a tag.
     * A tag keyword allows only half-width alphanumeric characters and underscores.
@@ -154,7 +154,7 @@ pict [freemind file] /s
 
 ## Selecting Test Coverage Criteria
 
-FMPict select test coverage by specifying options to {pict_exec_option}
+FMPict select test coverage by specifying options to {pict_exec_option}.
 
 ### Select 2-wise coverage 100%
 
@@ -192,7 +192,7 @@ Y1      X1      Z1
 
 if “/o:3” option is specified in the child node of {pict_exec_option}, FMPict generates a test case covering 3wise coverage 100%.
 
-## Detailed Option
+## Detailed Options
 
 * -h
     * Display help.
