@@ -136,6 +136,10 @@ fmpict [targetfile]
 
 [Tag1 is selected] When this example is executed with the following command, "Small" is input to PICT. "Large" is ignored.
 
+```
+fmpict [targetfile] -t "[tag1]"
+```
+
 ### Option Node
 
 * Child nodes of nodes writing {sub_model_definitions} are transferred to the sub_model_definitions part of the PICT input file.
