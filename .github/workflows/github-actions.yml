@@ -16,5 +16,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install flake8
-      - name: Run unit test
-        run: python tests/unittest_fmpict.py
+      - name: Run static analysis
+        run: flake8 fmpict
+#      - name: Run unit test
+#        run: python tests/unittest_fmpict.py
