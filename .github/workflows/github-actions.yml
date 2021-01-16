@@ -1,0 +1,19 @@
+name: fmpict
+on: [push]
+jobs:
+  unittest:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-versions: [3.8, 3.9]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version}}
+      - run: |
+        curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+      - run: echo "$HOME/.poetry/bin" >> $GITHUB_PATH
+      - run: poetry install --no-interaction
+      - run: poetry run pytest test --cov-report=xml
