@@ -15,6 +15,6 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install flake8 pytest pytest-cov
+          pip install flake8
       - name: Run unit test
-        run: pytest tests\unittest_fmpict.py --cov-report=xml
+        run: python tests/unittest_fmpict.py
