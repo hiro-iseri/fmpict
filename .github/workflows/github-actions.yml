@@ -19,5 +19,5 @@ jobs:
     - name: Run static analysis
       run: |
         flake8 fmpict --count --select=E9,F63,F7,F82 --show-source --statistics
-#      - name: Run unit test
-#        run: python tests/unittest_fmpict.py
+    - name: Run unit test
+      run: python tests/unittest_fmpict.py
