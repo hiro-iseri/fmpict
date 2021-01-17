@@ -13,9 +13,9 @@ import fmpict
 
 class TestFMPict(unittest.TestCase):
     def setUp(self):
-        self._target_dir_path = root_path +  '\\fmpict\\'
-        self._work_dir_path = root_path +  '\\tests\worktmp\\'
-        self._test_dir_path = root_path +  '\\tests\\fm_sample\\'
+        self._target_dir_path = root_path +  '/fmpict/'
+        self._work_dir_path = root_path +  '/tests/worktmp/'
+        self._test_dir_path = root_path +  '/tests/fm_sample/'
         if os.path.exists(self._work_dir_path):
             shutil.rmtree(self._work_dir_path)
         os.mkdir(self._work_dir_path)
