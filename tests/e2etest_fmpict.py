@@ -30,7 +30,8 @@ class TestFMPict(unittest.TestCase):
         out_proc.wait()
 
         self.assertFalse(stderr_data)
-        expected_output = b'A\tB\r\n3\tx\r\n3\tz\r\n1\tx\r\n1\ty\r\n2\tx\r\n3\ty\r\n1\tz\r\n2\tz\r\n2\ty\r\n'
+        expected_output = b'A\tB\n3\tx\n3\tz\n1\tx\n1\ty\n2\tx\n3\ty\n1\tz\n2\tz\n2\ty\n'
+        stdout_data = stdout_data.replace(b'\r\n', b'\n')
         self.assertEqual(expected_output, stdout_data)
 
 if __name__ == '__main__':
