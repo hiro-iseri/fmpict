@@ -41,6 +41,6 @@ jobs:
         git clone https://github.com/Microsoft/pict.git
         cd pict/
         make
-        mv pict ./../../
+        echo "$(pwd)" >> $GITHUB_PATH
     - name: Run E2E test
       run: python tests/e2etest_fmpict.py
