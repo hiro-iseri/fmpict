@@ -36,9 +36,11 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install flake8 pytest
+        mkdir repos
+        cd repos/
         git clone https://github.com/Microsoft/pict.git
         cd pict/
         make
-        mv pict ./../
+        mv pict ./../../
     - name: Run E2E test
       run: python tests/e2etest_fmpict.py
