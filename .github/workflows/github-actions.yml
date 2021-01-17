@@ -21,3 +21,24 @@ jobs:
         flake8 fmpict --count --select=E9,F63,F7,F82 --show-source --statistics
     - name: Run unit test
       run: python tests/unittest_fmpict.py
+  e2etest:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.9]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version}}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 pytest
+        git clone https://github.com/Microsoft/pict.git
+        cd pict/
+        make
+        mv pict ../pict
+    - name: Run E2E test
+      run: python tests/e2etest_fmpict.py
